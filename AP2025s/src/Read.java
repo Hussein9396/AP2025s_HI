@@ -36,6 +36,8 @@ public class Read {
 
         } catch (IOException e) {
             System.out.println("Fehler beim Lesen oder Schreiben der Datei: " + e.getMessage());
+            e.printStackTrace();
+            
         }
     }
 
