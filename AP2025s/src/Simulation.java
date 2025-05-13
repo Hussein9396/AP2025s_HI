@@ -1,8 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
@@ -12,10 +8,15 @@ public class Simulation {
     public List<Spawner> spawners = new ArrayList<>();
     public Map<Connection, StatisticsEntry> statistics = new HashMap<>();
     public double timeStepInSeconds = 1.0;
+    private InputParser parser;
+    private PlanWriter planWriter;
+    private BufferedWriter fahrzeugeWriter;
 
-    /**
-     * Hauptmethode: steuert die Simulation
-     */
+    public Simulation(InputParser parser, PlanWriter planWriter) {
+        this.parser = parser;
+        this.planWriter = planWriter;
+    }
+
     public void run(int totalTimeSteps) {
         for (int t = 0; t < totalTimeSteps; t++) {
             System.out.println("\n=== Zeitschritt " + t + " ===");
@@ -26,18 +27,11 @@ public class Simulation {
                     Vehicle newVehicle = spawner.spawnVehicle();
                     vehicles.add(newVehicle);
                     System.out.println("NEUES Fahrzeug erzeugt: ID " + newVehicle.id +
-                                    " auf " + newVehicle.currentConnection.from + " → " +
-                                    newVehicle.currentConnection.to);
+                            " auf " + newVehicle.currentConnection.from + " → " +
+                            newVehicle.currentConnection.to);
                 }
             }
-
-            // 📝 Diagnose: aktueller Fahrzeugbestand
-            System.out.println("Anzahl Fahrzeuge aktuell: " + vehicles.size());
-            for (Vehicle v : vehicles) {
-                System.out.println("Vehicle " + v.id + " auf " + v.currentConnection.from +
-                                " → " + v.currentConnection.to + " | Position: " +
-                                String.format("%.4f", v.positionOnConnection));
-            }
+            writeFahrzeugeSnapshot(t);
 
             // 2️⃣ Fahrzeuge bewegen
             Iterator<Vehicle> iterator = vehicles.iterator();
@@ -56,32 +50,68 @@ public class Simulation {
 
             // 3️⃣ Statistik aktualisieren
             updateStatistics();
+
         }
     }
 
+    private boolean decideNextConnection(Vehicle v) {
+        String currentKnoten = v.currentConnection.to;
 
-    /**
-     * Dummy-Methode: aktuell verschwindet jedes Fahrzeug am Ende
-     * Später kannst du hier deine Routing-Logik einbauen
-     */
-    private boolean decideNextConnection(Vehicle vehicle) {
-        // Aktuell: jedes Fahrzeug verschwindet wenn Connection zu Ende
-        return true;
+        for (Spawner spawner : spawners) {
+            if (spawner.spawnPoint.name.equals(currentKnoten)) {
+                return true;
+            }
+        }
+
+        KreuzungData kreuzung = null;
+        for (KreuzungData k : parser.getKreuzungen()) {
+            if (k.name.equals(currentKnoten)) {
+                kreuzung = k;
+                break;
+            }
+        }
+
+        if (kreuzung == null) return true;
+
+        String herkunft = v.currentConnection.from;
+        Map<String, Integer> möglicheZiele = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : kreuzung.targets.entrySet()) {
+            if (!entry.getKey().equals(herkunft)) {
+                möglicheZiele.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (möglicheZiele.isEmpty()) return true;
+
+        int summe = möglicheZiele.values().stream().mapToInt(Integer::intValue).sum();
+        int zufall = new Random().nextInt(summe) + 1;
+        int laufend = 0;
+        String nächstesZiel = null;
+        for (Map.Entry<String, Integer> entry : möglicheZiele.entrySet()) {
+            laufend += entry.getValue();
+            if (zufall <= laufend) {
+                nächstesZiel = entry.getKey();
+                break;
+            }
+        }
+
+        String key = currentKnoten + "-" + nächstesZiel;
+        Connection nextConnection = planWriter.getConnectionMap().get(key);
+
+        if (nextConnection == null) return true;
+
+        v.currentConnection = nextConnection;
+        v.positionOnConnection = 0.0;
+        return false;
     }
 
-    /**
-     * Beispiel: Statistikdaten aktualisieren
-     */
     private void updateStatistics() {
-        // Beispiel-Logik: zähle Fahrzeuge pro Connection
         Map<Connection, Integer> vehicleCounts = new HashMap<>();
-
         for (Vehicle v : vehicles) {
             Connection conn = v.currentConnection;
             vehicleCounts.put(conn, vehicleCounts.getOrDefault(conn, 0) + 1);
         }
 
-        // Trage gezählte Daten in StatisticsEntry ein
         for (Map.Entry<Connection, Integer> entry : vehicleCounts.entrySet()) {
             StatisticsEntry stat = statistics.get(entry.getKey());
             if (stat != null) {
@@ -91,15 +121,11 @@ public class Simulation {
             }
         }
 
-        // Max-Werte aktualisieren
         for (StatisticsEntry stat : statistics.values()) {
             stat.finalizeStep();
         }
     }
 
-    /**
-     * Statistik nach Ende der Simulation ausgeben
-     */
     public void writeStatisticsFile(String filename) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             writer.write("Gesamtanzahl Fahrzeuge pro 100 m:\n");
@@ -117,6 +143,40 @@ public class Simulation {
             }
 
             System.out.println("Statistik.txt erfolgreich geschrieben.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void prepareFahrzeugeOutput(String filename) {
+        try {
+            fahrzeugeWriter = new BufferedWriter(new FileWriter(filename));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeFahrzeugeSnapshot(int t) {
+        try {
+            fahrzeugeWriter.write("*** t = " + t + "\n");
+            for (Vehicle v : vehicles) {
+                Point from = v.currentConnection.fromPoint;
+                Point to = v.currentConnection.toPoint;
+                double x = from.x + (to.x - from.x) * v.positionOnConnection;
+                double y = from.y + (to.y - from.y) * v.positionOnConnection;
+
+                fahrzeugeWriter.write(x/100 + " " + y/100 + " " + to.x/100 + " " + to.y/100 + " " + v.id + "\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeFahrzeugeOutput() {
+        try {
+            if (fahrzeugeWriter != null) {
+                fahrzeugeWriter.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

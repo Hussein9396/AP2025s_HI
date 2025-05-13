@@ -13,10 +13,13 @@ class Spawner {
     }
 
     public boolean shouldSpawn(int currentTime) {
+        if (currentTime == 0) return false;
         return currentTime % takt == 0;
     }
 
     public Vehicle spawnVehicle() {
+        //test with constant speed
+        //double speed = 45.0; // km/h
         double speed = randomNormal(45, 10);
         int id = ++vehicleCounter;   // jetzt als int
         return new Vehicle(id, speed, toFirstConnection);

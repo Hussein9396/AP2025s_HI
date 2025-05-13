@@ -83,12 +83,12 @@ public class PlanWriter {
     public void writePlanFile(String outputPath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             for (Connection c : connections) {
-                writer.write(c.fromPoint.x + " " + c.fromPoint.y + " " +
-                             c.toPoint.x + " " + c.toPoint.y);
+                writer.write(c.fromPoint.x/100 + " " + c.fromPoint.y/100 + " " +
+                             c.toPoint.x/100 + " " + c.toPoint.y/100);
                 writer.newLine();
 
-                writer.write(c.toPoint.x + " " + c.toPoint.y + " " +
-                             c.fromPoint.x + " " + c.fromPoint.y);
+                writer.write(c.toPoint.x/100 + " " + c.toPoint.y/100 + " " +
+                             c.fromPoint.x/100 + " " + c.fromPoint.y/100);
                 writer.newLine();
             }
             System.out.println("Plan.txt erfolgreich geschrieben.");

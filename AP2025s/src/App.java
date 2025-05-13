@@ -14,10 +14,10 @@ public class App {
         );
 
         // ➕ optional: Plan.txt schreiben
-        //planWriter.writePlanFile("output/Plan.txt");
+        planWriter.writePlanFile("output/Plan1.txt");
 
         // 3️⃣ Simulation vorbereiten
-        Simulation simulation = new Simulation();
+        Simulation simulation = new Simulation(parser, planWriter);
 
         // ➕ Statistik vorbereiten: alle Connections
         for (Connection c : planWriter.getConnections()) {
@@ -39,12 +39,18 @@ public class App {
             }
         }
 
-        // 4️⃣ Simulation starten
-        int totalTimeSteps = 50;   // Beispiel: 50 Zeitschritte
+        // 4️⃣ Fahrzeuge.txt vorbereiten
+        simulation.prepareFahrzeugeOutput("output/Fahrzeuge1.txt");
+
+        // 5️⃣ Simulation starten
+        int totalTimeSteps = 50;   // Beispiel: 1000 Zeitschritte
         simulation.run(totalTimeSteps);
 
-        // 5️⃣ Statistik schreiben
-        simulation.writeStatisticsFile("output/Statistik_neu_neu.txt");
+        // 6️⃣ Fahrzeuge.txt schließen
+        simulation.closeFahrzeugeOutput();
+
+        // 7️⃣ Statistik schreiben
+        simulation.writeStatisticsFile("output/Statistik1.txt");
 
         System.out.println("Simulation abgeschlossen.");
     }
