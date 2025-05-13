@@ -84,7 +84,8 @@ public class PlanWriter {
                              c.fromPoint.x + " " + c.fromPoint.y);
                 writer.newLine();
             }
-            System.out.println("Plan.txt erfolgreich geschrieben.");
+            
+            System.out.println("Plan5.txt erfolgreich geschrieben.");
         } catch (IOException e) {
             e.printStackTrace();
         }
