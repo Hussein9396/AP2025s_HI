@@ -10,6 +10,7 @@ public class PlanWriter {
     private List<Connection> connections = new ArrayList<>();
     private Map<String, Connection> connectionMap = new HashMap<>();   // ✅ NEU für Referenz-Sicherheit
 
+
     /**
      * Konstruktor → übernimmt Daten vom InputParser
      */

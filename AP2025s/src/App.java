@@ -2,6 +2,14 @@ import java.util.Map;
 
 public class App {
     public static void main(String[] args) {
+
+        String outputFolder = "output1";
+        java.io.File outputFile = new java.io.File(outputFolder);
+        
+        if(!outputFile.exists()) {
+            outputFile.mkdirs();
+        }
+
         // 1️⃣ Eingabe einlesen
         InputParser parser = new InputParser("IHK_Download/IHK_01/Eingabe.txt");
         parser.parse();
@@ -14,7 +22,7 @@ public class App {
         );
 
         // ➕ optional: Plan.txt schreiben
-        planWriter.writePlanFile("output/Plan1.txt");
+        planWriter.writePlanFile(outputFolder + "/Plan.txt");
 
         // 3️⃣ Simulation vorbereiten
         Simulation simulation = new Simulation(parser, planWriter);
@@ -40,7 +48,7 @@ public class App {
         }
 
         // 4️⃣ Fahrzeuge.txt vorbereiten
-        simulation.prepareFahrzeugeOutput("output/Fahrzeuge1.txt");
+        simulation.prepareFahrzeugeOutput(outputFolder + "/Fahrzeuge.txt");
 
         // 5️⃣ Simulation starten
         int totalTimeSteps = 50;   // Beispiel: 1000 Zeitschritte
@@ -50,7 +58,7 @@ public class App {
         simulation.closeFahrzeugeOutput();
 
         // 7️⃣ Statistik schreiben
-        simulation.writeStatisticsFile("output/Statistik1.txt");
+        simulation.writeStatisticsFile(outputFolder + "/Statistik.txt");
 
         System.out.println("Simulation abgeschlossen.");
     }
