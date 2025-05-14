@@ -3,7 +3,14 @@ import java.util.Map;
 public class App {
     public static void main(String[] args) {
 
-        String outputFolder = "output1";
+        if (args.length < 2) {
+            System.out.println("Aufruf: java App <Eingabe-Datei> <Output-Ordner>");
+            return;
+        }
+
+        String eingabeDatei = args[0];
+        String outputFolder = args[1];
+
         java.io.File outputFile = new java.io.File(outputFolder);
         
         if(!outputFile.exists()) {
@@ -11,7 +18,7 @@ public class App {
         }
 
         // 1️⃣ Eingabe einlesen
-        InputParser parser = new InputParser("IHK_Download/IHK_01/Eingabe.txt");
+        InputParser parser = new InputParser(eingabeDatei);
         parser.parse();
 
         // 2️⃣ PlanWriter erzeugen + Verbindungen erstellen

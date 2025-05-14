@@ -19,16 +19,14 @@ public class Simulation {
 
     public void run(int totalTimeSteps) {
         for (int t = 0; t < totalTimeSteps; t++) {
-            System.out.println("\n=== Zeitschritt " + t + " ===");
+            //System.out.println("\n=== Zeitschritt " + t + " ===");
 
             // 1️⃣ Fahrzeuge erzeugen
             for (Spawner spawner : spawners) {
                 if (spawner.shouldSpawn(t)) {
                     Vehicle newVehicle = spawner.spawnVehicle();
                     vehicles.add(newVehicle);
-                    System.out.println("NEUES Fahrzeug erzeugt: ID " + newVehicle.id +
-                            " auf " + newVehicle.currentConnection.from + " → " +
-                            newVehicle.currentConnection.to);
+                    //System.out.println("NEUES Fahrzeug erzeugt: ID " + newVehicle.id + " auf " + newVehicle.currentConnection.from + " → " + newVehicle.currentConnection.to);
                 }
             }
             writeFahrzeugeSnapshot(t);
@@ -42,7 +40,7 @@ public class Simulation {
                 if (vehicle.reachedEndOfConnection()) {
                     boolean removed = decideNextConnection(vehicle);
                     if (removed) {
-                        System.out.println("Fahrzeug " + vehicle.id + " hat Ziel erreicht und wird entfernt.");
+                        //System.out.println("Fahrzeug " + vehicle.id + " hat Ziel erreicht und wird entfernt.");
                         iterator.remove();
                     }
                 }
@@ -50,8 +48,10 @@ public class Simulation {
 
             // 3️⃣ Statistik aktualisieren
             updateStatistics();
+            
 
         }
+        System.out.println("Fahrzeuge.txt erfolgreich geschrieben.");
     }
 
     private boolean decideNextConnection(Vehicle v) {
