@@ -23,5 +23,18 @@ class Vehicle {
         this.currentConnection = currentConnection;
         this.positionOnConnection = 0.0;
     }
+    // Getter-Methoden
+    public int getId() {
+        return id;
+    }
+    public double getSpeed() {
+        return speed;
+    }
+    public Connection getCurrentConnection() {
+        return currentConnection;
+    }
+    public double getPositionOnConnection() {
+        return positionOnConnection;
+    }
 
 }

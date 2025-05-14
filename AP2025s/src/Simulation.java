@@ -1,6 +1,4 @@
 import java.util.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 
 public class Simulation {
 
@@ -8,54 +6,45 @@ public class Simulation {
     public List<Spawner> spawners = new ArrayList<>();
     public Map<Connection, StatisticsEntry> statistics = new HashMap<>();
     public double timeStepInSeconds = 1.0;
+    
     private InputParser parser;
     private PlanWriter planWriter;
-    private BufferedWriter fahrzeugeWriter;
+    private FahrzeugeWriter fahrzeugeWriter;
 
-    public Simulation(InputParser parser, PlanWriter planWriter) {
+    public Simulation(InputParser parser, PlanWriter planWriter, FahrzeugeWriter fahrzeugeWriter) {
         this.parser = parser;
         this.planWriter = planWriter;
+        this.fahrzeugeWriter = fahrzeugeWriter;
     }
 
     public void run(int totalTimeSteps) {
         for (int t = 0; t < totalTimeSteps; t++) {
-            //System.out.println("\n=== Zeitschritt " + t + " ===");
-
-            // 1️⃣ Fahrzeuge erzeugen
             for (Spawner spawner : spawners) {
                 if (spawner.shouldSpawn(t)) {
-                    Vehicle newVehicle = spawner.spawnVehicle();
-                    vehicles.add(newVehicle);
-                    //System.out.println("NEUES Fahrzeug erzeugt: ID " + newVehicle.id + " auf " + newVehicle.currentConnection.from + " → " + newVehicle.currentConnection.to);
+                    vehicles.add(spawner.spawnVehicle());
                 }
             }
-            writeFahrzeugeSnapshot(t);
 
-            // 2️⃣ Fahrzeuge bewegen
+            fahrzeugeWriter.writeSnapshot(t, vehicles);
+
             Iterator<Vehicle> iterator = vehicles.iterator();
             while (iterator.hasNext()) {
-                Vehicle vehicle = iterator.next();
-                vehicle.move(timeStepInSeconds);
-
-                if (vehicle.reachedEndOfConnection()) {
-                    boolean removed = decideNextConnection(vehicle);
-                    if (removed) {
-                        //System.out.println("Fahrzeug " + vehicle.id + " hat Ziel erreicht und wird entfernt.");
-                        iterator.remove();
-                    }
+                Vehicle v = iterator.next();
+                v.move(timeStepInSeconds);
+                if (v.reachedEndOfConnection()) {
+                    boolean removed = decideNextConnection(v);
+                    if (removed) iterator.remove();
                 }
             }
 
-            // 3️⃣ Statistik aktualisieren
             updateStatistics();
-            
-
         }
-        System.out.println("Fahrzeuge.txt erfolgreich geschrieben.");
+
+        System.out.println("Simulation abgeschlossen.");
     }
 
     private boolean decideNextConnection(Vehicle v) {
-        String currentKnoten = v.currentConnection.to;
+        String currentKnoten = v.currentConnection.getTo();
 
         for (Spawner spawner : spawners) {
             if (spawner.spawnPoint.name.equals(currentKnoten)) {
@@ -63,6 +52,7 @@ public class Simulation {
             }
         }
 
+        //can also be done with streams!
         KreuzungData kreuzung = null;
         for (KreuzungData k : parser.getKreuzungen()) {
             if (k.name.equals(currentKnoten)) {
@@ -73,7 +63,7 @@ public class Simulation {
 
         if (kreuzung == null) return true;
 
-        String herkunft = v.currentConnection.from;
+        String herkunft = v.currentConnection.getFrom();
         Map<String, Integer> möglicheZiele = new HashMap<>();
         for (Map.Entry<String, Integer> entry : kreuzung.targets.entrySet()) {
             if (!entry.getKey().equals(herkunft)) {
@@ -108,7 +98,7 @@ public class Simulation {
     private void updateStatistics() {
         Map<Connection, Integer> vehicleCounts = new HashMap<>();
         for (Vehicle v : vehicles) {
-            Connection conn = v.currentConnection;
+            Connection conn = v.getCurrentConnection();
             vehicleCounts.put(conn, vehicleCounts.getOrDefault(conn, 0) + 1);
         }
 
@@ -126,59 +116,19 @@ public class Simulation {
         }
     }
 
-    public void writeStatisticsFile(String filename) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            writer.write("Gesamtanzahl Fahrzeuge pro 100 m:\n");
-            for (Map.Entry<Connection, StatisticsEntry> entry : statistics.entrySet()) {
-                Connection c = entry.getKey();
-                StatisticsEntry stats = entry.getValue();
-                writer.write(c.from + " -> " + c.to + ": " + stats.getTotalPer100m() + "\n");
-            }
-
-            writer.write("\nMaximale Anzahl Fahrzeuge pro 100 m:\n");
-            for (Map.Entry<Connection, StatisticsEntry> entry : statistics.entrySet()) {
-                Connection c = entry.getKey();
-                StatisticsEntry stats = entry.getValue();
-                writer.write(c.from + " -> " + c.to + ": " + stats.getMaxPer100m() + "\n");
-            }
-
-            System.out.println("Statistik.txt erfolgreich geschrieben.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public List<Spawner> getSpawners() {
+        return spawners;
+    }
+    
+    public Map<Connection, StatisticsEntry> getStatistics() {
+        return statistics;
+    }
+    
+    public void addSpawner(Spawner spawner) {
+        spawners.add(spawner);
     }
 
-    public void prepareFahrzeugeOutput(String filename) {
-        try {
-            fahrzeugeWriter = new BufferedWriter(new FileWriter(filename));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeFahrzeugeSnapshot(int t) {
-        try {
-            fahrzeugeWriter.write("*** t = " + t + "\n");
-            for (Vehicle v : vehicles) {
-                Point from = v.currentConnection.fromPoint;
-                Point to = v.currentConnection.toPoint;
-                double x = from.x + (to.x - from.x) * v.positionOnConnection;
-                double y = from.y + (to.y - from.y) * v.positionOnConnection;
-
-                fahrzeugeWriter.write(x/100 + " " + y/100 + " " + to.x/100 + " " + to.y/100 + " " + v.id + "\n");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void closeFahrzeugeOutput() {
-        try {
-            if (fahrzeugeWriter != null) {
-                fahrzeugeWriter.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void addStatisticsEntry(Connection connection, StatisticsEntry entry) {
+        statistics.put(connection, entry);
     }
 }

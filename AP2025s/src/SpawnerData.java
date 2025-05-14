@@ -8,4 +8,13 @@ public class SpawnerData {
         this.zielKreuzung = zielKreuzung;
         this.takt = takt;
     }
+    public String getName() {
+        return name;
+    }
+    public String getZielKreuzung() {
+        return zielKreuzung;
+    }
+    public int getTakt() {
+        return takt;
+    }
 }

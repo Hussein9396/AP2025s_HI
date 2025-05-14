@@ -17,5 +17,20 @@ public class Connection {
         this.toPoint = toPoint;
         this.distance = calculateDistance();
     }
+    public String getFrom() {
+        return from;
+    }
+    public String getTo() {
+        return to;
+    }
+    public Point getFromPoint() {
+        return fromPoint;
+    }
+    public Point getToPoint() {
+        return toPoint;
+    }
+    public double getDistance() {
+        return distance;
+    }
     
 }
