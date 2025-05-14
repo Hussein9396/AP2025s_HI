@@ -39,5 +39,11 @@ public class Vehicle {
     public double getPositionOnConnection() {
         return positionOnConnection;
     }
+    public void setCurrentConnection(Connection currentConnection) {
+        this.currentConnection = currentConnection;
+    }
+    public void setPositionOnConnection(double positionOnConnection) {
+        this.positionOnConnection = positionOnConnection;
+    }
 
 }
