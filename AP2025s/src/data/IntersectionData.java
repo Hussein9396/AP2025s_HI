@@ -1,11 +1,11 @@
 package data;
 import java.util.Map;
 
-public class KreuzungData {
-    String name;
-    Map<String, Integer> targets;
+public class IntersectionData {
+    private final String name;
+    private final Map<String, Integer> targets;
 
-    public KreuzungData(String name, Map<String, Integer> targets) {
+    public IntersectionData(String name, Map<String, Integer> targets) {
         this.name = name;
         this.targets = targets;
     }

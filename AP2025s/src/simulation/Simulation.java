@@ -2,21 +2,21 @@ package simulation;
 import java.util.*;
 
 import data.Connection;
-import data.KreuzungData;
+import data.IntersectionData;
 import io.FahrzeugeWriter;
 import io.InputParser;
 import io.PlanWriter;
 
 public class Simulation {
 
-    public List<Vehicle> vehicles = new ArrayList<>();
-    public List<Spawner> spawners = new ArrayList<>();
-    public Map<Connection, StatisticsEntry> statistics = new HashMap<>();
-    public double timeStepInSeconds = 1.0;
+    private final List<Vehicle> vehicles = new ArrayList<>();
+    private final List<Spawner> spawners = new ArrayList<>();
+    private final Map<Connection, StatisticsEntry> statistics = new HashMap<>();
+    private double timeStepInSeconds = 1.0;
     
-    private InputParser parser;
-    private PlanWriter planWriter;
-    private FahrzeugeWriter fahrzeugeWriter;
+    private final InputParser parser;
+    private final PlanWriter planWriter;
+    private final FahrzeugeWriter fahrzeugeWriter;
 
     public Simulation(InputParser parser, PlanWriter planWriter, FahrzeugeWriter fahrzeugeWriter) {
         this.parser = parser;
@@ -51,54 +51,54 @@ public class Simulation {
     }
 
     private boolean decideNextConnection(Vehicle v) {
-        String currentKnoten = v.currentConnection.getTo();
+        String currentNode = v.getCurrentConnection().getTo();
 
         for (Spawner spawner : spawners) {
-            if (spawner.spawnPoint.getName().equals(currentKnoten)) {
+            if (spawner.getSpawnPoint().getName().equals(currentNode)) {
                 return true;
             }
         }
 
         //can also be done with streams!
-        KreuzungData kreuzung = null;
-        for (KreuzungData k : parser.getKreuzungen()) {
-            if (k.getName().equals(currentKnoten)) {
-                kreuzung = k;
+        IntersectionData intersection = null;
+        for (IntersectionData k : parser.getIntersections()) {
+            if (k.getName().equals(currentNode)) {
+                intersection = k;
                 break;
             }
         }
 
-        if (kreuzung == null) return true;
+        if (intersection == null) return true;
 
-        String herkunft = v.currentConnection.getFrom();
-        Map<String, Integer> möglicheZiele = new HashMap<>();
-        for (Map.Entry<String, Integer> entry : kreuzung.getTargets().entrySet()) {
-            if (!entry.getKey().equals(herkunft)) {
-                möglicheZiele.put(entry.getKey(), entry.getValue());
+        String originNode = v.getCurrentConnection().getFrom();
+        Map<String, Integer> possibleTargets = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : intersection.getTargets().entrySet()) {
+            if (!entry.getKey().equals(originNode)) {
+                possibleTargets.put(entry.getKey(), entry.getValue());
             }
         }
 
-        if (möglicheZiele.isEmpty()) return true;
+        if (possibleTargets.isEmpty()) return true;
 
-        int summe = möglicheZiele.values().stream().mapToInt(Integer::intValue).sum();
-        int zufall = new Random().nextInt(summe) + 1;
-        int laufend = 0;
-        String nächstesZiel = null;
-        for (Map.Entry<String, Integer> entry : möglicheZiele.entrySet()) {
-            laufend += entry.getValue();
-            if (zufall <= laufend) {
-                nächstesZiel = entry.getKey();
+        int totalweight = possibleTargets.values().stream().mapToInt(Integer::intValue).sum();
+        int randonValue = new Random().nextInt(totalweight) + 1;
+        int comulativeweight = 0;
+        String nextTarget = null;
+        for (Map.Entry<String, Integer> entry : possibleTargets.entrySet()) {
+            comulativeweight += entry.getValue();
+            if (randonValue <= comulativeweight) {
+                nextTarget = entry.getKey();
                 break;
             }
         }
 
-        String key = currentKnoten + "-" + nächstesZiel;
+        String key = currentNode + "-" + nextTarget;
         Connection nextConnection = planWriter.getConnectionMap().get(key);
 
         if (nextConnection == null) return true;
 
-        v.currentConnection = nextConnection;
-        v.positionOnConnection = 0.0;
+        v.setCurrentConnection(nextConnection);
+        v.setPositionOnConnection(0.0);
         return false;
     }
 

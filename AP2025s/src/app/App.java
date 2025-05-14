@@ -54,7 +54,7 @@ public class App {
             return;
         }
 
-        String eingabeDatei = args[0];
+        String inputFile = args[0];
         String outputFolder = args[1];
 
         // Create output folder if not existing
@@ -64,13 +64,13 @@ public class App {
         }
 
         // 1️⃣ Read and parse input
-        InputParser parser = new InputParser(eingabeDatei);
+        InputParser parser = new InputParser(inputFile);
         parser.parse();
 
         // 2️⃣ Build static road network
         PlanWriter planWriter = new PlanWriter(
                 parser.getPoints(),
-                parser.getKreuzungen(),
+                parser.getIntersections(),
                 parser.getSpawnerData()
         );
         planWriter.writePlanFile(outputFolder + "/Plan.txt");
@@ -88,11 +88,11 @@ public class App {
         Map<String, Connection> connectionMap = planWriter.getConnectionMap();
         for (SpawnerData data : parser.getSpawnerData()) {
             Point startPoint = parser.getPoints().get(data.getName());
-            String key = data.getName() + "-" + data.getZielKreuzung();
+            String key = data.getName() + "-" + data.getTargetIntersecion();
             Connection firstConnection = connectionMap.get(key);
 
             if (firstConnection != null) {
-                simulation.addSpawner(new Spawner(startPoint, firstConnection, data.getTakt()));
+                simulation.addSpawner(new Spawner(startPoint, firstConnection, data.getSpawnInterval()));
             } else {
                 System.out.println("WARNUNG: Keine Verbindung für Spawner " + key);
             }

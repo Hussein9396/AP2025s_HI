@@ -17,7 +17,7 @@ public class StatisticCalculator {
     }
 
     /**
-     * Ausgabe aller Verbindungen
+     * Ausgabe aller Verbindungen. For Debugging
      */
     public void printConnections() {
         System.out.println("=== Verbindungen ===");
@@ -30,13 +30,13 @@ public class StatisticCalculator {
     }
 
     /**
-     * Zählt Fahrzeuge auf allen Strecken
+     * Zählt Fahrzeuge auf allen Strecken.
      */
     public Map<Connection, Integer> calculateVehicleCounts(List<Vehicle> vehicles) {
         Map<Connection, Integer> vehicleCounts = new HashMap<>();
 
         for (Vehicle v : vehicles) {
-            Connection conn = v.currentConnection;
+            Connection conn = v.getCurrentConnection();
             vehicleCounts.put(conn, vehicleCounts.getOrDefault(conn, 0) + 1);
         }
 
@@ -44,7 +44,7 @@ public class StatisticCalculator {
     }
 
     /**
-     * Gibt Fahrzeuganzahlen pro Strecke aus
+     * Gibt Fahrzeuganzahlen pro Strecke aus. For Debugging
      */
     public void printVehicleCounts(Map<Connection, Integer> vehicleCounts) {
         System.out.println("=== Fahrzeuganzahl pro Strecke ===");

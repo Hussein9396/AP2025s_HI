@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-import data.KreuzungData;
+import data.IntersectionData;
 import data.Point;
 import data.SpawnerData;
 
@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class InputParser {
-    private String filename;
+    private final String filename;
 
-    private Map<String, Point> points = new HashMap<>();
-    private List<SpawnerData> spawnerData = new ArrayList<>();
-    private List<KreuzungData> kreuzungen = new ArrayList<>();
+    private final Map<String, Point> points = new HashMap<>();
+    private final List<SpawnerData> spawnerData = new ArrayList<>();
+    private final List<IntersectionData> intersections = new ArrayList<>();
 
     public InputParser(String filename) {
         this.filename = filename;
@@ -57,7 +57,7 @@ public class InputParser {
                     for (int i = 3; i < parts.length; i += 2) {
                         targets.put(parts[i], Integer.parseInt(parts[i+1]));
                     }
-                    kreuzungen.add(new KreuzungData(name, targets));
+                    intersections.add(new IntersectionData(name, targets));
                 }
             }
 
@@ -70,5 +70,5 @@ public class InputParser {
 
     public List<SpawnerData> getSpawnerData() { return spawnerData; }
 
-    public List<KreuzungData> getKreuzungen() { return kreuzungen; }
+    public List<IntersectionData> getIntersections() { return intersections; }
 }

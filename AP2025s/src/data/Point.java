@@ -1,8 +1,8 @@
 package data;
 public class Point {
-    String name;
-    double x;
-    double y;
+    private final String name;
+    private final double x;
+    private final double y;
 
     public Point(String name, double x, double y) {
         this.name = name;

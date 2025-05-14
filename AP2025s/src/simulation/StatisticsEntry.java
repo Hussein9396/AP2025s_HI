@@ -2,14 +2,12 @@ package simulation;
 import data.Connection;
 
 public class StatisticsEntry {
-    Connection connection;
-    double length;                      // Länge der Straße in Meter
-    int totalVehicles = 0;              // Summe aller Fahrzeuge
-    int currentVehiclesInStep = 0;      // Fahrzeuge in aktuellem Zeitschritt
-    int maxVehiclesInStep = 0;          // Maximal gleichzeitig Fahrzeuge auf der Straße
+    private final double length;                      // Länge der Straße in Meter
+    private int totalVehicles = 0;              // Summe aller Fahrzeuge
+    private int currentVehiclesInStep = 0;      // Fahrzeuge in aktuellem Zeitschritt
+    private int maxVehiclesInStep = 0;          // Maximal gleichzeitig Fahrzeuge auf der Straße
 
     public StatisticsEntry(Connection connection) {
-        this.connection = connection;
         this.length = connection.getDistance();
     }
 

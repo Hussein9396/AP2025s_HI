@@ -6,19 +6,19 @@ import data.Point;
 
 public class Spawner {
     private static int vehicleCounter = 0;
-    Point spawnPoint;
-    Connection toFirstConnection;
-    int takt;
+    private final Point spawnPoint;
+    private final Connection toFirstConnection;
+    private final int spawnInterval;
 
-    public Spawner(Point spawnPoint, Connection toFirstConnection, int takt) {
+    public Spawner(Point spawnPoint, Connection toFirstConnection, int spawnInterval) {
         this.spawnPoint = spawnPoint;
         this.toFirstConnection = toFirstConnection;
-        this.takt = takt;
+        this.spawnInterval = spawnInterval;
     }
 
     public boolean shouldSpawn(int currentTime) {
         if (currentTime == 0) return false;
-        return currentTime % takt == 0;
+        return currentTime % spawnInterval == 0;
     }
 
     public Vehicle spawnVehicle() {
@@ -32,5 +32,17 @@ public class Spawner {
     private double randomNormal(double mean, double stdDev) {
         Random rand = new Random();
         return mean + stdDev * rand.nextGaussian();
+    }
+
+    public Point getSpawnPoint() {
+        return spawnPoint;
+    }
+
+    public Connection getToFirstConnection() {
+        return toFirstConnection;
+    }
+
+    public int getspawnInterval() {
+        return spawnInterval;
     }
 }

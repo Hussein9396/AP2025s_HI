@@ -1,14 +1,14 @@
 package data;
 public class Connection {
-    String from;
-    String to;
-    Point fromPoint;
-    Point toPoint;
+    private final String from;
+    private final String to;
+    private final Point fromPoint;
+    private final Point toPoint;
     
     double distance;
 
     public double calculateDistance() {
-        return Math.sqrt(Math.pow((toPoint.x - fromPoint.x), 2) + Math.pow((toPoint.y - fromPoint.y), 2));
+        return Math.sqrt(Math.pow((toPoint.getX() - fromPoint.getX()), 2) + Math.pow((toPoint.getY() - fromPoint.getY()), 2));
     }
 
     public Connection(String from, String to, Point fromPoint, Point toPoint) {

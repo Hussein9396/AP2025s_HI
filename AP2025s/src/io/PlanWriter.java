@@ -5,32 +5,32 @@ import java.io.IOException;
 import java.util.*;
 
 import data.Connection;
-import data.KreuzungData;
+import data.IntersectionData;
 import data.Point;
 import data.SpawnerData;
 
 public class PlanWriter {
 
-    private Map<String, Point> points = new HashMap<>();
-    private Set<String> connectionsSet = new HashSet<>();
-    private List<Connection> connections = new ArrayList<>();
-    private Map<String, Connection> connectionMap = new HashMap<>();   // ✅ NEU für Referenz-Sicherheit
+    private final Map<String, Point> points;
+    private final Set<String> connectionsSet = new HashSet<>();
+    private final List<Connection> connections = new ArrayList<>();
+    private final Map<String, Connection> connectionMap = new HashMap<>();   // ✅ NEU für Referenz-Sicherheit
 
 
     /**
      * Konstruktor → übernimmt Daten vom InputParser
      */
-    public PlanWriter(Map<String, Point> points, List<KreuzungData> kreuzungen, List<SpawnerData> spawners) {
+    public PlanWriter(Map<String, Point> points, List<IntersectionData> intersections, List<SpawnerData> spawners) {
         this.points = points;
-        buildConnections(kreuzungen);
+        buildConnections(intersections);
         addSpawnerConnections(spawners);   // ➕ EP → Kreuzung Verbindungen
     }
 
     /**
      * Verbindungen Kreuzung → Kreuzung
      */
-    private void buildConnections(List<KreuzungData> kreuzungen) {
-        for (KreuzungData kd : kreuzungen) {
+    private void buildConnections(List<IntersectionData> intersections) {
+        for (IntersectionData kd : intersections) {
             String from = kd.getName();
             if (!points.containsKey(from)) continue;
 
@@ -45,7 +45,7 @@ public class PlanWriter {
      */
     private void addSpawnerConnections(List<SpawnerData> spawners) {
         for (SpawnerData spawner : spawners) {
-            addConnection(spawner.getName(), spawner.getZielKreuzung());
+            addConnection(spawner.getName(), spawner.getTargetIntersecion());
         }
     }
 
@@ -83,6 +83,7 @@ public class PlanWriter {
     public Map<String, Connection> getConnectionMap() {
         return connectionMap;
     }
+
 
     /**
      * Plan.txt für Plot.py erzeugen

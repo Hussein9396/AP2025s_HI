@@ -2,10 +2,10 @@ package simulation;
 import data.Connection;
 
 public class Vehicle {
-    int id;                            // ID des Fahrzeugs
-    double speed;                       // in km/h → umrechnen in m/s
-    Connection currentConnection;
-    double positionOnConnection;        // 0.0 bis 1.0
+    private final int id;                            // ID des Fahrzeugs
+    private final double speed;                       // in km/h → umrechnen in m/s
+    private Connection currentConnection;
+    private double positionOnConnection;        // 0.0 bis 1.0
 
     void move(double timeStepInSeconds) {
         double streetLength = currentConnection.getDistance();    // z.B. in Metern
