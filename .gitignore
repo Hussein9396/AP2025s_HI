@@ -1,0 +1,68 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs (hs_err_pid*.log)
+hs_err_pid*
+
+# Eclipse files
+*.pydevproject
+.project
+.metadata
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+out/
+
+# VSCode files
+.vscode/
+
+# NetBeans files
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Gradle files
+.gradle/
+build/
+
+# Maven target directory
+target/
+
+# Generated files
+bin/
+gen/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Your output folders (optional)
+
