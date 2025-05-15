@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import data.Connection;
-import simulation.StatisticsEntry;
+import logic.StatisticsEntry;
 
 public class StatistikWriter {
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import data.Point;
-import simulation.Vehicle;
+import logic.Vehicle;
 
 public class FahrzeugeWriter {
     private BufferedWriter writer;

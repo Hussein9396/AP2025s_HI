@@ -9,9 +9,10 @@ import io.FahrzeugeWriter;
 import io.InputParser;
 import io.PlanWriter;
 import io.StatistikWriter;
-import simulation.Simulation;
-import simulation.Spawner;
-import simulation.StatisticsEntry;
+import logic.Simulation;
+import logic.Spawner;
+import logic.StatisticsEntry;
+
 import java.io.*;
 
 /**

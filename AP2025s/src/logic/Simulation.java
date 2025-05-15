@@ -1,4 +1,4 @@
-package simulation;
+package logic;
 
 import java.util.*;
 
