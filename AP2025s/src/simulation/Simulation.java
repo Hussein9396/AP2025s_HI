@@ -1,8 +1,10 @@
 package simulation;
+
 import java.util.*;
 
 import data.Connection;
-import data.IntersectionData;
+import data.Point;
+import data.IntersectionPoint;
 import io.FahrzeugeWriter;
 import io.InputParser;
 import io.PlanWriter;
@@ -13,7 +15,7 @@ public class Simulation {
     private final List<Spawner> spawners = new ArrayList<>();
     private final Map<Connection, StatisticsEntry> statistics = new HashMap<>();
     private double timeStepInSeconds = 1.0;
-    
+
     private final InputParser parser;
     private final PlanWriter planWriter;
     private final FahrzeugeWriter fahrzeugeWriter;
@@ -55,20 +57,12 @@ public class Simulation {
 
         for (Spawner spawner : spawners) {
             if (spawner.getSpawnPoint().getName().equals(currentNode)) {
-                return true;
+                return true; // vehicle reached a spawner point, remove it
             }
         }
 
-        //can also be done with streams!
-        IntersectionData intersection = null;
-        for (IntersectionData k : parser.getIntersections()) {
-            if (k.getName().equals(currentNode)) {
-                intersection = k;
-                break;
-            }
-        }
-
-        if (intersection == null) return true;
+        Point p = parser.getPoints().get(currentNode);
+        if (!(p instanceof IntersectionPoint intersection)) return true; // no valid intersection → remove vehicle
 
         String originNode = v.getCurrentConnection().getFrom();
         Map<String, Integer> possibleTargets = new HashMap<>();
@@ -80,13 +74,13 @@ public class Simulation {
 
         if (possibleTargets.isEmpty()) return true;
 
-        int totalweight = possibleTargets.values().stream().mapToInt(Integer::intValue).sum();
-        int randonValue = new Random().nextInt(totalweight) + 1;
-        int comulativeweight = 0;
+        int totalWeight = possibleTargets.values().stream().mapToInt(Integer::intValue).sum();
+        int randomValue = new Random().nextInt(totalWeight) + 1;
+        int cumulativeWeight = 0;
         String nextTarget = null;
         for (Map.Entry<String, Integer> entry : possibleTargets.entrySet()) {
-            comulativeweight += entry.getValue();
-            if (randonValue <= comulativeweight) {
+            cumulativeWeight += entry.getValue();
+            if (randomValue <= cumulativeWeight) {
                 nextTarget = entry.getKey();
                 break;
             }
@@ -126,11 +120,11 @@ public class Simulation {
     public List<Spawner> getSpawners() {
         return spawners;
     }
-    
+
     public Map<Connection, StatisticsEntry> getStatistics() {
         return statistics;
     }
-    
+
     public void addSpawner(Spawner spawner) {
         spawners.add(spawner);
     }

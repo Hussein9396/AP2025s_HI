@@ -3,9 +3,13 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-import data.IntersectionData;
+import data.EntryPoint;
+
+import data.IntersectionPoint;
 import data.Point;
-import data.SpawnerData;
+
+
+
 
 import java.util.HashMap;
 import java.nio.file.Files;
@@ -16,8 +20,7 @@ public class InputParser {
     private final String filename;
 
     private final Map<String, Point> points = new HashMap<>();
-    private final List<SpawnerData> spawnerData = new ArrayList<>();
-    private final List<IntersectionData> intersections = new ArrayList<>();
+
 
     public InputParser(String filename) {
         this.filename = filename;
@@ -40,10 +43,10 @@ public class InputParser {
                     String name = parts[0];
                     double x = Double.parseDouble(parts[1]) * 100;
                     double y = Double.parseDouble(parts[2]) * 100;
-                    String ziel = parts[3];
-                    int takt = Integer.parseInt(parts[4]);
-                    points.put(name, new Point(name, x, y));
-                    spawnerData.add(new SpawnerData(name, ziel, takt));
+                    String target = parts[3];
+                    int spawnInterval = Integer.parseInt(parts[4]);
+                    points.put(name, new EntryPoint(name, x, y, target, spawnInterval));
+                    //spawnerData.add(new SpawnerData(name, target, spawnInterval));
                 }
 
                 if (readingKreuzungen) {
@@ -51,13 +54,14 @@ public class InputParser {
                     String name = parts[0];
                     double x = Double.parseDouble(parts[1]) * 100;
                     double y = Double.parseDouble(parts[2]) * 100;
-                    points.put(name, new Point(name, x, y));
-
+                    
+                    
                     Map<String, Integer> targets = new HashMap<>();
                     for (int i = 3; i < parts.length; i += 2) {
                         targets.put(parts[i], Integer.parseInt(parts[i+1]));
                     }
-                    intersections.add(new IntersectionData(name, targets));
+                    points.put(name, new IntersectionPoint(name, x, y, targets));
+                    //intersections.add(new IntersectionData(name, targets));
                 }
             }
 
@@ -68,7 +72,4 @@ public class InputParser {
 
     public Map<String, Point> getPoints() { return points; }
 
-    public List<SpawnerData> getSpawnerData() { return spawnerData; }
-
-    public List<IntersectionData> getIntersections() { return intersections; }
 }

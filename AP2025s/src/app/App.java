@@ -1,9 +1,11 @@
 package app;
+
 import java.util.Map;
 
 import data.Connection;
+import data.EntryPoint;
+import data.IntersectionPoint;
 import data.Point;
-import data.SpawnerData;
 import io.FahrzeugeWriter;
 import io.InputParser;
 import io.PlanWriter;
@@ -11,8 +13,9 @@ import io.StatistikWriter;
 import simulation.Simulation;
 import simulation.Spawner;
 import simulation.StatisticsEntry;
-/*
- * Fahrzeug-Simulator - Hauptklasse 
+
+/**
+ * Fahrzeug-Simulator - Hauptklasse
  */
 public class App {
     public static void main(String[] args) {
@@ -34,33 +37,34 @@ public class App {
         parser.parse();
 
         PlanWriter planWriter = new PlanWriter(
-                parser.getPoints(),
-                parser.getIntersections(),
-                parser.getSpawnerData()
+                parser.getPoints()
         );
         planWriter.writePlanFile(outputFolder + "/Plan.txt");
 
         FahrzeugeWriter fahrzeugeWriter = new FahrzeugeWriter(outputFolder + "/Fahrzeuge.txt");
         Simulation simulation = new Simulation(parser, planWriter, fahrzeugeWriter);
 
+        // Add statistics tracking for each connection
         for (Connection c : planWriter.getConnections()) {
             simulation.addStatisticsEntry(c, new StatisticsEntry(c));
         }
 
+        // Add spawners from EntryPoints
         Map<String, Connection> connectionMap = planWriter.getConnectionMap();
-        for (SpawnerData data : parser.getSpawnerData()) {
-            Point startPoint = parser.getPoints().get(data.getName());
-            String key = data.getName() + "-" + data.getTargetIntersecion();
-            Connection firstConnection = connectionMap.get(key);
+        for (Point point : parser.getPoints().values()) {
+            if (point instanceof EntryPoint ep) {
+                String key = ep.getName() + "-" + ep.getTargetIntersection();
+                Connection firstConnection = connectionMap.get(key);
 
-            if (firstConnection != null) {
-                simulation.addSpawner(new Spawner(startPoint, firstConnection, data.getSpawnInterval()));
-            } else {
-                System.out.println("WARNUNG: Keine Verbindung für Spawner " + key);
+                if (firstConnection != null) {
+                    simulation.addSpawner(new Spawner(ep, firstConnection, ep.getSpawnInterval()));
+                } else {
+                    System.out.println("WARNUNG: Keine Verbindung für Spawner " + key);
+                }
             }
         }
 
-        int totalTimeSteps = 100;
+        int totalTimeSteps = 100; // Example: 50 time steps
         simulation.run(totalTimeSteps);
 
         fahrzeugeWriter.close();

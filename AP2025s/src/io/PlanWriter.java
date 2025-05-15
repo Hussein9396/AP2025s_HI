@@ -1,13 +1,14 @@
 package io;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
 import data.Connection;
-import data.IntersectionData;
+import data.EntryPoint;
+import data.IntersectionPoint;
 import data.Point;
-import data.SpawnerData;
 
 public class PlanWriter {
 
@@ -16,32 +17,31 @@ public class PlanWriter {
     private final List<Connection> connections = new ArrayList<>();
     private final Map<String, Connection> connectionMap = new HashMap<>();
 
-
-
-    public PlanWriter(Map<String, Point> points, List<IntersectionData> intersections, List<SpawnerData> spawners) {
+    public PlanWriter(Map<String, Point> points) {
         this.points = points;
-        buildConnections(intersections);
-        addSpawnerConnections(spawners);
+        buildConnectionsFromIntersections();
+        buildConnectionsFromEntryPoints();
     }
 
-    private void buildConnections(List<IntersectionData> intersections) {
-        for (IntersectionData kd : intersections) {
-            String from = kd.getName();
-            if (!points.containsKey(from)) continue;
+    private void buildConnectionsFromIntersections() {
+        for (Point point : points.values()) {
+            if (point instanceof IntersectionPoint intersection) {
+                String from = intersection.getName();
 
-            for (String target : kd.getTargets().keySet()) {
-                addConnection(from, target);
+                for (String target : intersection.getTargets().keySet()) {
+                    addConnection(from, target);
+                }
             }
         }
     }
 
-
-    private void addSpawnerConnections(List<SpawnerData> spawners) {
-        for (SpawnerData spawner : spawners) {
-            addConnection(spawner.getName(), spawner.getTargetIntersecion());
+    private void buildConnectionsFromEntryPoints() {
+        for (Point point : points.values()) {
+            if (point instanceof EntryPoint entryPoint) {
+                addConnection(entryPoint.getName(), entryPoint.getTargetIntersection());
+            }
         }
     }
-
 
     private void addConnection(String from, String to) {
         String key = from + "-" + to;
@@ -65,7 +65,6 @@ public class PlanWriter {
         return connections;
     }
 
-
     public Map<String, Connection> getConnectionMap() {
         return connectionMap;
     }
@@ -73,10 +72,9 @@ public class PlanWriter {
     public void writePlanFile(String outputPath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             for (Connection c : connections) {
-                writer.write(c.getFromPoint().getX()/100 + " " + c.getFromPoint().getY()/100 + " " +
-                             c.getToPoint().getX()/100 + " " + c.getToPoint().getY()/100);
+                writer.write(c.getFromPoint().getX() / 100 + " " + c.getFromPoint().getY() / 100 + " " +
+                             c.getToPoint().getX() / 100 + " " + c.getToPoint().getY() / 100);
                 writer.newLine();
-
             }
             System.out.println("Plan.txt erfolgreich geschrieben.");
         } catch (IOException e) {
