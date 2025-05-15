@@ -1,6 +1,5 @@
 package io;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import data.EntryPoint;
@@ -25,7 +24,7 @@ public class InputParser {
     public InputParser(String filename) {
         this.filename = filename;
     }
-
+    // Parses the input file and populates the map of points (EntryPoints and IntersectionPoints).
     public void parse() {
         try {
             List<String> lines = Files.readAllLines(Paths.get(filename));
@@ -46,7 +45,6 @@ public class InputParser {
                     String target = parts[3];
                     int spawnInterval = Integer.parseInt(parts[4]);
                     points.put(name, new EntryPoint(name, x, y, target, spawnInterval));
-                    //spawnerData.add(new SpawnerData(name, target, spawnInterval));
                 }
 
                 if (readingKreuzungen) {
@@ -61,7 +59,6 @@ public class InputParser {
                         targets.put(parts[i], Integer.parseInt(parts[i+1]));
                     }
                     points.put(name, new IntersectionPoint(name, x, y, targets));
-                    //intersections.add(new IntersectionData(name, targets));
                 }
             }
 

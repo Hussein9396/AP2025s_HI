@@ -18,6 +18,7 @@ public class FahrzeugeWriter {
         }
     }
 
+    // Writes the snapshot of vehicles at a given time step to the file.
     public void writeSnapshot(int t, List<Vehicle> vehicles) {
         try {
             writer.write("*** t = " + t + "\n");

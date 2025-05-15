@@ -26,8 +26,11 @@ public class Simulation {
         this.fahrzeugeWriter = fahrzeugeWriter;
     }
 
+    //Main Simulation Loop; advances time, spawns new vehicles, moves vehicles, and updates statistics.
     public void run(int totalTimeSteps) {
-        for (int t = 0; t < totalTimeSteps; t++) {
+        //advance time
+        for (int t = 0; t <= totalTimeSteps; t++) {
+            // spawn new vehicles if it is an entry point
             for (Spawner spawner : spawners) {
                 if (spawner.shouldSpawn(t)) {
                     vehicles.add(spawner.spawnVehicle());
@@ -36,6 +39,7 @@ public class Simulation {
 
             fahrzeugeWriter.writeSnapshot(t, vehicles);
 
+            // move vehicles
             Iterator<Vehicle> iterator = vehicles.iterator();
             while (iterator.hasNext()) {
                 Vehicle v = iterator.next();
@@ -52,26 +56,31 @@ public class Simulation {
         System.out.println("Simulation abgeschlossen.");
     }
 
+    //Decides the next connection for a vehicle. If target is an entry point (spawner), it removes the vehicle from the simulation.
+    //true = remove vehicle, false = keep vehicle
     private boolean decideNextConnection(Vehicle v) {
         String currentNode = v.getCurrentConnection().getTo();
 
         for (Spawner spawner : spawners) {
             if (spawner.getSpawnPoint().getName().equals(currentNode)) {
-                return true; // vehicle reached a spawner point, remove it
+                return true;
             }
         }
 
         Point p = parser.getPoints().get(currentNode);
-        if (!(p instanceof IntersectionPoint intersection)) return true; // no valid intersection → remove vehicle
+        if (!(p instanceof IntersectionPoint intersection)) return true;
 
         String originNode = v.getCurrentConnection().getFrom();
         Map<String, Integer> possibleTargets = new HashMap<>();
+        
+        // Fills possibleTargets with all possible targets from the intersection, excluding the origin node
         for (Map.Entry<String, Integer> entry : intersection.getTargets().entrySet()) {
             if (!entry.getKey().equals(originNode)) {
                 possibleTargets.put(entry.getKey(), entry.getValue());
             }
         }
 
+        // If there are no possible targets, return true to remove the vehicle
         if (possibleTargets.isEmpty()) return true;
 
         int totalWeight = possibleTargets.values().stream().mapToInt(Integer::intValue).sum();
@@ -91,8 +100,10 @@ public class Simulation {
 
         if (nextConnection == null) return true;
 
+        // Calculate leftover distance (overshoot) and transfer it to the next connection
+        double leftover = v.getPositionOnConnection() - 1.0;
         v.setCurrentConnection(nextConnection);
-        v.setPositionOnConnection(0.0);
+        v.setPositionOnConnection(leftover);
         return false;
     }
 

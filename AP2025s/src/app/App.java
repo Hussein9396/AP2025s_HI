@@ -4,7 +4,6 @@ import java.util.Map;
 
 import data.Connection;
 import data.EntryPoint;
-import data.IntersectionPoint;
 import data.Point;
 import io.FahrzeugeWriter;
 import io.InputParser;
@@ -15,7 +14,7 @@ import simulation.Spawner;
 import simulation.StatisticsEntry;
 
 /**
- * Fahrzeug-Simulator - Hauptklasse
+ * Main class for the simulation application.
  */
 public class App {
     public static void main(String[] args) {
@@ -64,7 +63,7 @@ public class App {
             }
         }
 
-        int totalTimeSteps = 100; // Example: 50 time steps
+        int totalTimeSteps = 100;
         simulation.run(totalTimeSteps);
 
         fahrzeugeWriter.close();

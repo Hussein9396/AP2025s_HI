@@ -23,6 +23,7 @@ public class PlanWriter {
         buildConnectionsFromEntryPoints();
     }
 
+    //Creates connections between intersections based on the map definition.
     private void buildConnectionsFromIntersections() {
         for (Point point : points.values()) {
             if (point instanceof IntersectionPoint intersection) {
@@ -35,6 +36,7 @@ public class PlanWriter {
         }
     }
 
+    //Creates connections from entry points to their target intersections.
     private void buildConnectionsFromEntryPoints() {
         for (Point point : points.values()) {
             if (point instanceof EntryPoint entryPoint) {
@@ -43,6 +45,7 @@ public class PlanWriter {
         }
     }
 
+    // Adds a connection between two points if it doesn't already exist.
     private void addConnection(String from, String to) {
         String key = from + "-" + to;
 
@@ -60,25 +63,25 @@ public class PlanWriter {
             }
         }
     }
-
-    public List<Connection> getConnections() {
-        return connections;
-    }
-
-    public Map<String, Connection> getConnectionMap() {
-        return connectionMap;
-    }
-
+    
+    // Writes coordinates of connections to a file.
     public void writePlanFile(String outputPath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             for (Connection c : connections) {
                 writer.write(c.getFromPoint().getX() / 100 + " " + c.getFromPoint().getY() / 100 + " " +
-                             c.getToPoint().getX() / 100 + " " + c.getToPoint().getY() / 100);
+                c.getToPoint().getX() / 100 + " " + c.getToPoint().getY() / 100);
                 writer.newLine();
             }
             System.out.println("Plan.txt erfolgreich geschrieben.");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public List<Connection> getConnections() {
+        return connections;
+    }
+    public Map<String, Connection> getConnectionMap() {
+        return connectionMap;
     }
 }
