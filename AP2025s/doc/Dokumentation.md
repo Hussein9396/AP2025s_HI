@@ -366,9 +366,9 @@ Windows (CMD):
 java -cp bin app.App <Pfad_zur_Eingabe.txt> <Ausgabeordner>
 ```
 Beispiel für `<Pfad_zur_Eingabe.txt>`:
->`Linux:./input/IHK_03/Eingabe.txt`
+>`Linux:./input/Eingabe_IHK_03.txt`
 
->`Windows (CMD): ./input\IHK_03\Eingabe.txt`
+>`Windows (CMD): .\input\Eingabe_IHK_03.txt`
 
 Beispiel für `<Ausgabeordner>`:
 >`output_03`
@@ -376,12 +376,6 @@ Beispiel für `<Ausgabeordner>`:
 Wenn Sie die Argumente <Pfad_zur_Eingabe.txt> oder <Ausgabeordner> falsch eingeben, kann das Programm nicht funktionieren.
 Ausgabeordner wird automatsch erzeugt wenn das Programm richtig kompiliert und gestartet ist.  
 
-## Fehlerfälle
-
-
-<div style="page-break-after: always;"></div>
-
-# Entwicklerdokumentation
 ## Projektstruktur
 Das Projekt ist wie folgt strukturiert:
 ```
@@ -396,11 +390,17 @@ AP2025s/
 │   │   └── ...
 │   ├── Plot_howto.txt
 │   └── ...
+├── referenz_output/
+│   ├── output_IHK_01
+│   │   ├── plots
+│   │   │   ├── t=0
+│   │   │   └── ...
+│   │   ├── Plan.txt
+│   │   └── ...
+│   └── ...
 ├── input/
-│   ├── IHK_01/
-│   │   └── Eingabe.txt
-│   ├── ...
-│   └── Weitere Tests
+│   ├── Eingabe_IHK_01.txt
+│   └── ...
 ├── src/
 │   ├── app/
 │   │   └── App
@@ -423,9 +423,15 @@ AP2025s/
 └── Plot.py
 ```
 
-# Testbeispiele
+# Test
 
 ## Vorgegebene Testfälle
+
+Die vorgegebenen Testfälle befinden sich in den Ordnern `input/IHK_*`. Ich habe alle fünf Testfälle erfolgreich mit dem entwickelten Programm ausgeführt. Die generierten Ergebnisse sind nachvollziehbar und sinnvoll.
+
+Die Datei `Plan.txt`, deren Inhalte deterministisch sind, konnte direkt mit den im Aufgabenblatt gezeigten Werten verglichen werden – sie stimmen überein. Die Dateien `Statistik.txt` und `Fahrzeuge.txt` enthalten Zufallseinflüsse. Daher sind exakte Übereinstimmungen mit Beispielwerten nicht möglich. Dennoch zeigen die Ausgaben eine konsistente Logik und realistische Verkehrsdynamik, was die korrekte Funktionsweise der Simulation bestätigt.
+
+Die im Verzeichnis `referenz_output/` enthaltenen Dateien zeigen beispielhafte Ausgaben der Simulation und dienen zur Veranschaulichung der Programmfunktion. Sie werden bei jedem Programmlauf neu erzeugt und können sich durch Zufallseinflüsse leicht unterscheiden.
 
 ## Weitere Testfälle
 
