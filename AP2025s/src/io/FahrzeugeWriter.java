@@ -19,7 +19,7 @@ public class FahrzeugeWriter {
     }
 
     // Writes the snapshot of vehicles at a given time step to the file.
-    public void writeSnapshot(int t, List<Vehicle> vehicles) {
+    public void writeFahrzeugeFile(int t, List<Vehicle> vehicles) {
         try {
             writer.write("*** t = " + t + "\n");
             for (Vehicle v : vehicles) {
@@ -36,7 +36,10 @@ public class FahrzeugeWriter {
 
     public void close() {
         try {
-            if (writer != null) writer.close();
+            if (writer != null){
+                writer.close();
+                System.out.println("Fahrzeuge.txt erfolgreich geschrieben.");
+            } 
         } catch (IOException e) {
             e.printStackTrace();
         }

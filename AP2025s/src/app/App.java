@@ -97,7 +97,7 @@ public class App {
 
         fahrzeugeWriter.close();
         StatistikWriter statistikWriter = new StatistikWriter();
-        statistikWriter.write(outputFolder + "/Statistik.txt", simulation.getStatistics());
+        statistikWriter.writeStatistikFile(outputFolder + "/Statistik.txt", simulation.getStatistics());
 
         System.out.println("Programm abgeschlossen.");
     }

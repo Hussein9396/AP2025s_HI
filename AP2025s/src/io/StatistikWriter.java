@@ -9,7 +9,7 @@ import simulation.StatisticsEntry;
 
 public class StatistikWriter {
 
-    public void write(String filename, Map<Connection, StatisticsEntry> statistics) {
+    public void writeStatistikFile(String filename, Map<Connection, StatisticsEntry> statistics) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             writer.write("Gesamtanzahl Fahrzeuge pro 100 m:\n");
             for (Map.Entry<Connection, StatisticsEntry> entry : statistics.entrySet()) {

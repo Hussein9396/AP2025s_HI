@@ -37,7 +37,7 @@ public class Simulation {
                 }
             }
 
-            fahrzeugeWriter.writeSnapshot(t, vehicles);
+            fahrzeugeWriter.writeFahrzeugeFile(t, vehicles);
 
             // move vehicles
             Iterator<Vehicle> iterator = vehicles.iterator();
@@ -53,7 +53,7 @@ public class Simulation {
             updateStatistics();
         }
 
-        System.out.println("Simulation abgeschlossen.");
+        //System.out.println("Simulation abgeschlossen.");
     }
 
     //Decides the next connection for a vehicle. If target is an entry point (spawner), it removes the vehicle from the simulation.
