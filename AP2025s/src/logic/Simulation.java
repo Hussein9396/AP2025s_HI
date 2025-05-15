@@ -9,6 +9,9 @@ import io.FahrzeugeWriter;
 import io.InputParser;
 import io.PlanWriter;
 
+//Main class for the simulation. 
+//It manages the simulation of vehicles, their movement, and the statistics collection.
+
 public class Simulation {
 
     private final List<Vehicle> vehicles = new ArrayList<>();

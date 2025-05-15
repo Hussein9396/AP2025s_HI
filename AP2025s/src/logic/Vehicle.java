@@ -1,6 +1,9 @@
 package logic;
 import data.Connection;
 
+// This class represents a vehicle in the simulation.
+// It contains information about the vehicle's ID, speed, current connection, and position on that connection.
+
 public class Vehicle {
     private final int id;                           
     private final double speed;                      

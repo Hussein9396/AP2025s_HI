@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+// Parses the input file to extract entry points and intersection points and their properties.
+
 public class InputParser {
     private final String filename;
 

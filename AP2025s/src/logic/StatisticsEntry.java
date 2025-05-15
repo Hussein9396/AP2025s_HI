@@ -3,7 +3,6 @@ import data.Connection;
 
 // Tracks vehicle flow statistics for a single connection during the simulation.
 
-
 public class StatisticsEntry {
     private final double length;          
     private int totalVehicles = 0;              

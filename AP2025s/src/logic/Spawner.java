@@ -4,6 +4,9 @@ import java.util.Random;
 import data.Connection;
 import data.Point;
 
+// This class is responsible for spawning vehicles at a specific point in the simulation.
+// It determines when to spawn a vehicle and generates a new vehicle with a random speed.
+
 public class Spawner {
     private static int vehicleCounter = 0;
     private final Point spawnPoint;
