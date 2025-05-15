@@ -12,6 +12,7 @@ import io.StatistikWriter;
 import simulation.Simulation;
 import simulation.Spawner;
 import simulation.StatisticsEntry;
+import java.io.*;
 
 /**
  * Main class for the simulation application.
@@ -19,15 +20,44 @@ import simulation.StatisticsEntry;
 public class App {
     public static void main(String[] args) {
 
-        if (args.length < 2) {
-            System.out.println("Aufruf: java App <Eingabe-Datei> <Output-Ordner>");
-            return;
+        if (args.length != 3) {
+            System.out.println("Fehler: Bitte geben Sie genau 3 Argumente an.");
+            System.out.println("Verwendung: java App <Eingabe-Datei> <Output-Ordner> <TimeSteps>");
+            System.exit(1);
         }
 
         String inputFile = args[0];
         String outputFolder = args[1];
+        String timeStepsArg = args[2];
 
-        java.io.File outputFile = new java.io.File(outputFolder);
+        // Check if input file exists
+        File input = new File(inputFile);
+        if (!input.exists() || !input.isFile()) {
+            System.out.println("Fehler: Eingabedatei '" + inputFile + "' existiert nicht.");
+            System.exit(1);
+        }
+
+        // Check output folder name
+        if (outputFolder.trim().isEmpty()) {
+            System.out.println("Fehler: Der Ausgabepfad darf nicht leer sein.");
+            System.exit(1);
+        }
+
+        // Parse time steps
+        int totalTimeSteps;
+        try {
+            totalTimeSteps = Integer.parseInt(timeStepsArg);
+            if (totalTimeSteps <= 0 || totalTimeSteps > 1800) {
+                System.out.println("Fehler: TimeSteps muss eine positive ganze Zahl zwischen 1 und 1800 sein (entspricht halbe Stunde).");
+                System.exit(1);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Fehler: TimeSteps muss eine ganze Zahl sein.");
+            System.exit(1);
+            return;
+        }
+
+        File outputFile = new File(outputFolder);
         if (!outputFile.exists()) {
             outputFile.mkdirs();
         }
@@ -63,7 +93,6 @@ public class App {
             }
         }
 
-        int totalTimeSteps = 100;
         simulation.run(totalTimeSteps);
 
         fahrzeugeWriter.close();
