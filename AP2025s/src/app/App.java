@@ -21,15 +21,14 @@ import java.io.*;
 public class App {
     public static void main(String[] args) {
 
-        if (args.length != 3) {
-            System.out.println("Fehler: Bitte geben Sie genau 3 Argumente an.");
-            System.out.println("Verwendung: java App <Eingabe-Datei> <Output-Ordner> <TimeSteps>");
+        if (args.length != 2) {
+            System.out.println("Fehler: Bitte geben Sie genau 2 Argumente an.");
+            System.out.println("Verwendung: java App <Eingabe-Datei> <Output-Ordner>");
             System.exit(1);
         }
 
         String inputFile = args[0];
         String outputFolder = args[1];
-        String timeStepsArg = args[2];
 
         // Check if input file exists
         File input = new File(inputFile);
@@ -44,27 +43,18 @@ public class App {
             System.exit(1);
         }
 
-        // Parse time steps
-        int totalTimeSteps;
-        try {
-            totalTimeSteps = Integer.parseInt(timeStepsArg);
-            if (totalTimeSteps <= 0 || totalTimeSteps > 1800) {
-                System.out.println("Fehler: TimeSteps muss eine positive ganze Zahl zwischen 1 und 1800 sein (entspricht halbe Stunde).");
-                System.exit(1);
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Fehler: TimeSteps muss eine ganze Zahl sein.");
-            System.exit(1);
-            return;
-        }
-
+        
         File outputFile = new File(outputFolder);
         if (!outputFile.exists()) {
             outputFile.mkdirs();
         }
-
+        
         InputParser parser = new InputParser(inputFile);
         parser.parse();
+        
+        // Parse time steps
+        int totalTimeSteps = parser.getTotalTimeSteps();
+        int timeStepInSeconds = parser.getTimeStepInSeconds();
 
         PlanWriter planWriter = new PlanWriter(
                 parser.getPoints()
@@ -72,7 +62,7 @@ public class App {
         planWriter.writePlanFile(outputFolder + "/Plan.txt");
 
         FahrzeugeWriter fahrzeugeWriter = new FahrzeugeWriter(outputFolder + "/Fahrzeuge.txt");
-        Simulation simulation = new Simulation(parser, planWriter, fahrzeugeWriter);
+        Simulation simulation = new Simulation(parser, planWriter, fahrzeugeWriter, timeStepInSeconds);
 
         // Add statistics tracking for each connection
         for (Connection c : planWriter.getConnections()) {

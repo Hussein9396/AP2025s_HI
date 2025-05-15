@@ -17,16 +17,17 @@ public class Simulation {
     private final List<Vehicle> vehicles = new ArrayList<>();
     private final List<Spawner> spawners = new ArrayList<>();
     private final Map<Connection, StatisticsEntry> statistics = new HashMap<>();
-    private double timeStepInSeconds = 1.0;
+    private double timeStepInSeconds;
 
     private final InputParser parser;
     private final PlanWriter planWriter;
     private final FahrzeugeWriter fahrzeugeWriter;
 
-    public Simulation(InputParser parser, PlanWriter planWriter, FahrzeugeWriter fahrzeugeWriter) {
+    public Simulation(InputParser parser, PlanWriter planWriter, FahrzeugeWriter fahrzeugeWriter, double timeStepInSeconds) {
         this.parser = parser;
         this.planWriter = planWriter;
         this.fahrzeugeWriter = fahrzeugeWriter;
+        this.timeStepInSeconds = timeStepInSeconds;
     }
 
     //Main Simulation Loop; advances time, spawns new vehicles, moves vehicles, and updates statistics.
