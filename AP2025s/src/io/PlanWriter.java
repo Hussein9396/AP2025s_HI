@@ -95,9 +95,6 @@ public class PlanWriter {
                              c.getToPoint().getX()/100 + " " + c.getToPoint().getY()/100);
                 writer.newLine();
 
-                writer.write(c.getToPoint().getX()/100 + " " + c.getToPoint().getY()/100 + " " +
-                             c.getFromPoint().getX()/100 + " " + c.getFromPoint().getY()/100);
-                writer.newLine();
             }
             System.out.println("Plan.txt erfolgreich geschrieben.");
         } catch (IOException e) {
