@@ -9,16 +9,12 @@ public class StatisticCalculator {
 
     private List<Connection> connections;
 
-    /**
-     * Konstruktor → bekommt alle Connections
-     */
+
     public StatisticCalculator(List<Connection> connections) {
         this.connections = connections;
     }
 
-    /**
-     * Ausgabe aller Verbindungen. For Debugging
-     */
+
     public void printConnections() {
         System.out.println("=== Verbindungen ===");
         for (Connection c : connections) {
@@ -29,9 +25,7 @@ public class StatisticCalculator {
         }
     }
 
-    /**
-     * Zählt Fahrzeuge auf allen Strecken.
-     */
+
     public Map<Connection, Integer> calculateVehicleCounts(List<Vehicle> vehicles) {
         Map<Connection, Integer> vehicleCounts = new HashMap<>();
 
@@ -43,9 +37,7 @@ public class StatisticCalculator {
         return vehicleCounts;
     }
 
-    /**
-     * Gibt Fahrzeuganzahlen pro Strecke aus. For Debugging
-     */
+
     public void printVehicleCounts(Map<Connection, Integer> vehicleCounts) {
         System.out.println("=== Fahrzeuganzahl pro Strecke ===");
         for (Map.Entry<Connection, Integer> entry : vehicleCounts.entrySet()) {

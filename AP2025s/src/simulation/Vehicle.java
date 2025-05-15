@@ -2,14 +2,14 @@ package simulation;
 import data.Connection;
 
 public class Vehicle {
-    private final int id;                            // ID des Fahrzeugs
-    private final double speed;                       // in km/h → umrechnen in m/s
+    private final int id;                           
+    private final double speed;                      
     private Connection currentConnection;
-    private double positionOnConnection;        // 0.0 bis 1.0
+    private double positionOnConnection;        
 
     void move(double timeStepInSeconds) {
-        double streetLength = currentConnection.getDistance();    // z.B. in Metern
-        double speedInMS = speed / 3.6;                     // km/h → m/s
+        double streetLength = currentConnection.getDistance();
+        double speedInMS = speed / 3.6;                     
         double distance = speedInMS * timeStepInSeconds;
         double progress = distance / streetLength;
 

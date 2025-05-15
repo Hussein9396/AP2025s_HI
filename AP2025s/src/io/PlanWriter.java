@@ -14,21 +14,16 @@ public class PlanWriter {
     private final Map<String, Point> points;
     private final Set<String> connectionsSet = new HashSet<>();
     private final List<Connection> connections = new ArrayList<>();
-    private final Map<String, Connection> connectionMap = new HashMap<>();   // ✅ NEU für Referenz-Sicherheit
+    private final Map<String, Connection> connectionMap = new HashMap<>();
 
 
-    /**
-     * Konstruktor → übernimmt Daten vom InputParser
-     */
+
     public PlanWriter(Map<String, Point> points, List<IntersectionData> intersections, List<SpawnerData> spawners) {
         this.points = points;
         buildConnections(intersections);
-        addSpawnerConnections(spawners);   // ➕ EP → Kreuzung Verbindungen
+        addSpawnerConnections(spawners);
     }
 
-    /**
-     * Verbindungen Kreuzung → Kreuzung
-     */
     private void buildConnections(List<IntersectionData> intersections) {
         for (IntersectionData kd : intersections) {
             String from = kd.getName();
@@ -40,18 +35,14 @@ public class PlanWriter {
         }
     }
 
-    /**
-     * Verbindungen Einfallspunkt → Kreuzung
-     */
+
     private void addSpawnerConnections(List<SpawnerData> spawners) {
         for (SpawnerData spawner : spawners) {
             addConnection(spawner.getName(), spawner.getTargetIntersecion());
         }
     }
 
-    /**
-     * Verbindung hinzufügen + gleichzeitig connectionMap pflegen
-     */
+
     private void addConnection(String from, String to) {
         String key = from + "-" + to;
 
@@ -65,29 +56,20 @@ public class PlanWriter {
                 Connection conn = new Connection(from, to, fromPoint, toPoint);
                 connections.add(conn);
                 connectionsSet.add(key);
-                connectionMap.put(key, conn);     // ✅ NEU → für Spawner + Statistics
+                connectionMap.put(key, conn);
             }
         }
     }
 
-    /**
-     * Gibt alle Verbindungen zurück
-     */
     public List<Connection> getConnections() {
         return connections;
     }
 
-    /**
-     * Gibt die Connection-Map zurück (für Spawner in App)
-     */
+
     public Map<String, Connection> getConnectionMap() {
         return connectionMap;
     }
 
-
-    /**
-     * Plan.txt für Plot.py erzeugen
-     */
     public void writePlanFile(String outputPath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             for (Connection c : connections) {
