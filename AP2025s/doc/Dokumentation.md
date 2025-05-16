@@ -183,6 +183,8 @@ Nach Ende der Simulation:
   * **Gesamtanzahl Fahrzeuge pro 100 m**
   * **Maximale Anzahl Fahrzeuge pro 100 m**
 
+<div style="page-break-after: always;"></div>
+
 Beispielauszug für Statistik.txt:
 
 ```
@@ -251,6 +253,8 @@ Im Folgenden sind Programmablaufpläne (PAP) für wichtigste Methoden des System
 
 **Abbildung 8:** Programmablaufplan für FahrzeugeWriter
 
+<div style="page-break-after: always;"></div>
+
 # Änderungen gegenüber dem Konzept vom Montag
 ## Algorithmische Änderungen
 In meinem ersten Konzept am Montag war das Ziel, ein vollständiges Streckennetz, Fahrzeuge-Daten und Statistiken mithilfe der Eingabedatei zu erzeugen.
@@ -297,7 +301,11 @@ Somit liefert die finale Simulation präzisere, dynamische Werte.
 
 **Fahrzeuge:** Auch die Berechnung der Fahrzeugpositionen wurde deutlich verbessert:
 
-* Montag: geplante Berechnung als $X_{neu} = X_{Start} + \Delta X$ war schwierig umzusetzen.
+* Montag: geplante Berechnung als 
+  $$
+  X_{neu} = X_{Start} + \Delta X
+  $$
+   war schwierig umzusetzen.
 * Jetzt: exakte lineare Interpolation zwischen Start- und Zielpunkt basierend auf **positionOnConnection** (Wert zwischen 0 und 1).
 * Implementiert in **FahrzeugeWriter.writeSnapshot()**.
 
@@ -338,6 +346,8 @@ In diesem Kapitel werden die vier Erweiterungsmöglichkeiten vorgestellt, die au
 
 **Lösungsansatz:** Um streckenabhängige Geschwindigkeiten zu simulieren, wird `Connection` um ein Attribut `speedLimit` ergänzt. Beim Wechsel auf eine neue Verbindung prüft das Fahrzeug in `setCurrentConnection()` die erlaubte Höchstgeschwindigkeit und passt die eigene `speed` ggf. an. Alternativ kann pro Zeitschritt in `Vehicle.move()` die Geschwindigkeit dynamisch angepasst werden (z. B. bei Kurven, Stau). Die vorhandene Architektur erlaubt diese Erweiterung problemlos, da die Bewegung bereits zentral über `Vehicle.move()` gesteuert wird.
 
+
+<div style="page-break-after: always;"></div>
 
 # Benutzeranleitung
 Diese Anleitung beschreibt, wie Sie das Verkehrsflusssimulationsprogramm installieren, konfigurieren und ausführen können.
@@ -386,6 +396,7 @@ Die Visualisierung zeigt alle Zeitschritte mit Überschrift an. Am Ende die Simu
 ```
 python3 Plot.py output_03/
 ```
+<div style="page-break-after: always;"></div>
 
 ## Projektstruktur
 Das Projekt ist wie folgt strukturiert:
@@ -433,6 +444,7 @@ AP2025s/
 │   │   └── Vehicle
 └── Plot.py
 ```
+<div style="page-break-after: always;"></div>
 
 # Test
 
