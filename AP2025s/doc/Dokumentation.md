@@ -20,9 +20,9 @@
     - [Installation](#installation)
     - [Ausführung der Testfälle](#ausführung-der-testfälle)
 7. [Projektstruktur](#projektstruktur)
-8. [Testbeispiele](#testbeispiele)
+8. [Testfälle](#testfälle)
     - [Vorgegebene Testfälle](#vorgegebene-testfälle)
-    - [Eigene Erweiterungstestfälle](#eigene-erweiterungstestfälle)
+    - [Eigene Testfälle](#eigene-testfälle)
 9. [Zusammenfassung und Ausblick](#zusammenfassung-und-ausblick)
 
 <div style="page-break-after: always;"></div>
@@ -129,6 +129,7 @@ double distance = sqrt((x2 - x1)^2 + (y2 - y1)^2);
 ````
 
 Die Verbindungen werden in einer Liste und einem Lookup-Map gespeichert. Zusätzlich wird die Datei `Plan.txt` erzeugt, welche alle Verbindungen für mögliche grafische Visualisierung enthält.
+<div style="page-break-after: always;"></div>
 
 
 ### 3. Vorbereitung der Simulation
@@ -211,7 +212,7 @@ Beispielauszug für Fahrzeuge.txt:
 
 <div style="page-break-after: always;"></div>
 
-## Verbale Beschreibung des realisierten Verfahrens
+## Formale Beschreibung des realisierten Verfahrens
 ### UML-Klassendiagramme
 Das entwickelte Softwaresystem zur Verkehrsnetz-Simulation ist modular und objektorientiert aufgebaut. Die Hauptbestandteile bestehen aus den Bereichen Datenhaltung (Punkte, Verbindungen, Fahrzeuge), Ein-/Ausgabe, Logik (Simulation und Statistik) sowie dem Einstiegspunkt `App`.
 
@@ -446,7 +447,7 @@ AP2025s/
 ```
 <div style="page-break-after: always;"></div>
 
-# Test
+# Testfälle
 
 ## Vorgegebene Testfälle
 
@@ -456,7 +457,7 @@ Die Datei `Plan.txt`, deren Inhalte deterministisch sind, konnte direkt mit den 
 
 Die im Verzeichnis `referenz_output/` enthaltenen Dateien zeigen beispielhafte Ausgaben der Simulation und dienen zur Veranschaulichung der Programmfunktion. Sie werden bei jedem Programmlauf neu erzeugt und können sich durch Zufallseinflüsse leicht unterscheiden.
 
-## Weitere Testfälle
+## Eigene Testfälle
 
 # Zusammenfassung und Ausblick
 In diesem Projekt wurde eine verkehrsbasierte Simulationsumgebung entwickelt, die den Fluss von Fahrzeugen durch ein Netzwerk aus Einfallspunkten und Kreuzungen modelliert. Die Anwendung liest eine strukturierte Eingabedatei, konstruiert automatisch ein Straßennetz, simuliert den Fahrzeugfluss über definierte Zeitintervalle und dokumentiert sowohl Momentaufnahmen der Fahrzeugpositionen als auch statistische Auswertungen der Netzlast.
