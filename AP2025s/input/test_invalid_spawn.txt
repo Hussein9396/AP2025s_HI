@@ -1,0 +1,6 @@
+Zeitraum:
+50 1
+Einfallspunkte:
+A 0 0 B notanumber
+Kreuzungen:
+B 1 1 C 1

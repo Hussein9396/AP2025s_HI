@@ -19,5 +19,8 @@ public class StatisticCalculator {
 
         return vehicleCounts;
     }
+    public StatisticCalculator(List<Connection> allConnections) {
+
+    }
 
 }

@@ -443,7 +443,15 @@ AP2025s/
 │   │   ├── StatisticCalculator
 │   │   ├── StatisticEntry
 │   │   └── Vehicle
-└── Plot.py
+├── test/
+│   ├── io/
+│   │   ├── InputParserTest.java
+│   │   └── ...
+│   ├── logic/
+│   │   ├── SpawnerTest.java
+│   │   └── ...
+├── Plot.py
+└── pom.xml
 ```
 <div style="page-break-after: always;"></div>
 
@@ -458,6 +466,26 @@ Die Datei `Plan.txt`, deren Inhalte deterministisch sind, konnte direkt mit den 
 Die im Verzeichnis `referenz_output/` enthaltenen Dateien zeigen beispielhafte Ausgaben der Simulation und dienen zur Veranschaulichung der Programmfunktion. Sie werden bei jedem Programmlauf neu erzeugt und können sich durch Zufallseinflüsse leicht unterscheiden.
 
 ## Eigene Testfälle
+
+Zusätzlich zu den vorgegebenen Testszenarien habe ich gezielt einzelne Programmkomponenten mithilfe von Unit-Tests überprüft, um deren Korrektheit isoliert zu validieren.
+
+Folgende Testklassen wurden mit JUnit 5 entwickelt:
+
+- **InputParserTest**: prüft, ob die Eingabedatei korrekt analysiert wird – auch bei fehlerhaften oder unvollständigen Einträgen.
+- **PlanWriterTest**: verifiziert die automatische Konstruktion von Verbindungen basierend auf den Eingabepunkten, inklusive Filterung ungültiger Ziele.
+- **VehicleTest**: überprüft das Bewegungsverhalten einzelner Fahrzeuge und erkennt korrekt das Erreichen eines Straßenendes.
+- **SpawnerTest**: stellt sicher, dass Fahrzeuge nur in den definierten Intervallen erzeugt werden und realistische Geschwindigkeiten erhalten.
+- **StatisticCalculatorTest**: zählt die Fahrzeuge pro Verbindung korrekt und erkennt Mehrfachnutzung zuverlässig.
+- **StatisticsEntryTest**: kontrolliert die Berechnung von durchschnittlichen und maximalen Fahrzeugzahlen pro 100 m.
+
+Jede dieser Klassen enthält sowohl Standard- als auch Rand- und Fehlerfälle. Dadurch konnte ich sicherstellen, dass die grundlegende Logik aller Module unabhängig vom Gesamtablauf korrekt funktioniert.
+
+Die Tests wurden über Maven (`mvn test`) ausgeführt. Alle Testfälle liefen erfolgreich und bestätigten die erwartete Funktionsweise.
+
+![ ](./img/Unit-Test.png)
+
+**Abbildung 9:** Screenshot Ergebnisse Unit-Test
+
 
 # Zusammenfassung und Ausblick
 In diesem Projekt wurde eine verkehrsbasierte Simulationsumgebung entwickelt, die den Fluss von Fahrzeugen durch ein Netzwerk aus Einfallspunkten und Kreuzungen modelliert. Die Anwendung liest eine strukturierte Eingabedatei, konstruiert automatisch ein Straßennetz, simuliert den Fahrzeugfluss über definierte Zeitintervalle und dokumentiert sowohl Momentaufnahmen der Fahrzeugpositionen als auch statistische Auswertungen der Netzlast.

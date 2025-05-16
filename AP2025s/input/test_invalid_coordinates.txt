@@ -1,0 +1,6 @@
+Zeitraum:
+100 1
+Einfallspunkte:
+A x y B 5
+Kreuzungen:
+B 2 2 A 1
