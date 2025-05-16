@@ -2,34 +2,28 @@
 1. [Einleitung](#einleitung)
 2. [Aufgabenanalyse](#aufgabenanalyse)
 3. [Verfahrensbeschreibung](#verfahrensbeschreibung)
-    - [Verbale Beschreibung des realisierten Verfahrens am Beispiel](#verbale-beschreibung-des-realisierten-verfahrens-am-beispiel)
-4. [Programmbeschreibung](#programmbeschreibung)
-    - [UML-Klassendiagramme](#uml-klassendiagramme)
-    - [UML-Sequenzdiagramm](#uml-sequenzdiagramm)
-    - [Programmablaufplan](#programmablaufplan)
-5. [Änderungen gegenüber dem Konzept vom Montag](#änderungen-gegenüber-dem-konzept-vom-montag)
+    - [Verbale Beschreibung des realisierten Verfahrens](#verbale-beschreibung-des-realisierten-verfahrens)
+        - [Algorithmus](#algorithmus)
+    - [Formale Beschreibung des realisierten Verfahrens](#formale-beschreibung-des-realisierten-verfahrens)
+        - [UML-Klassendiagramme](#uml-klassendiagramme)
+        - [UML-Sequenzdiagramm](#uml-sequenzdiagramm)
+        - [Programmablaufplan](#programmablaufplan)
+4. [Änderungen gegenüber dem Konzept vom Montag](#änderungen-gegenüber-dem-konzept-vom-montag)
     - [Algorithmische Änderungen](#algorithmische-änderungen)
     - [Optimierungen](#optimierungen)
-6. [Erweiterbarkeit gemäß den Anforderungen des Auftraggebers](#erweiterbarkeit-gemäß-den-anforderungen-des-auftraggebers)
-    - [Überholverbot und Mindestabstand](#überholverbot-und-mindestabstand)
-    - [Verkehrsflussregelung an Kreuzungen (Ampeln, Kreisverkehr, Rechts-vor-Links)](#verkehrsflussregelung-an-kreuzungen-ampeln-kreisverkehr-rechts-vor-links)
+5. [Erweiterbarkeit gemäß den Anforderungen des Auftraggebers](#erweiterbarkeit-gemäß-den-anforderungen-des-auftraggebers)
+    - [Mindestabstand und Überholverbot](#mindestabstand-und-überholverbot)
+    - [Verkehrsflussregelung an Kreuzungen](#verkehrsflussregelung-an-kreuzungen)
     - [Mehrspurige Strecken](#mehrspurige-strecken)
-    - [Dynamische Fahrzeuggeschwindigkeiten](#dynamische-fahrzeuggeschwindigkeiten)
-    - [Bewertung des Aufwands und Umsetzungsmöglichkeiten](#bewertung-des-aufwands-und-umsetzungsmöglichkeiten)
-7. [Benutzeranleitung](#benutzeranleitung)
+    - [Dynamische Fahrzeuggeschwindigkeit](#dynamische-fahrzeuggeschwindigkeit)
+6. [Benutzeranleitung](#benutzeranleitung)
     - [Installation](#installation)
-    - [Ausführung der Beispielsimulationen](#ausführung-der-beispielsimulationen)
     - [Ausführung der Testfälle](#ausführung-der-testfälle)
-8. [Entwicklerdokumentation](#entwicklerdokumentation)
-    - [Projektstruktur](#projektstruktur)
-    - [Funktionale Klassen und Dateien](#funktionale-klassen-und-dateien)
-    - [Hilfs- und Zusatzdateien](#hilfs-und-zusatzdateien)
-9. [Testbeispiele](#testbeispiele)
+7. [Projektstruktur](#projektstruktur)
+8. [Testbeispiele](#testbeispiele)
     - [Vorgegebene Testfälle](#vorgegebene-testfälle)
     - [Eigene Erweiterungstestfälle](#eigene-erweiterungstestfälle)
-10. [Zusammenfassung und Ausblick](#zusammenfassung-und-ausblick)
-11. [Quellcode-Auszug](#quellcode-auszug)
-
+9. [Zusammenfassung und Ausblick](#zusammenfassung-und-ausblick)
 
 <div style="page-break-after: always;"></div>
 
@@ -103,137 +97,9 @@ Diese Dateien sind notwendig, um das bereitgestellte Plot-Skript mit den erforde
 <div style="page-break-after: always;"></div>
 
 # Verfahrensbeschreibung
-
-## a) Einlesen und Initialisierung der Daten
-
-Zu Beginn der Programmausführung wird die vom Benutzer angegebene Eingabedatei mit dem `InputParser` eingelesen. Die Datei enthält verschiedene strukturierte Bereiche: Zeitraum, Einfallspunkte und Kreuzungen. Kommentarzeilen und Leerzeilen werden dabei ignoriert. Im Abschnitt "Zeitraum" werden die Anzahl der zu simulierenden Zeitschritte sowie die Dauer eines einzelnen Schrittes in Sekunden eingelesen und gespeichert. Anschließend folgen die "Einfallspunkte", die als `EntryPoint` im Programm genannt wird. Jeder `EntryPoint` beinhaltet neben Namen und Koordinaten auch den Namen der Zielkreuzung sowie das Spawn-Intervall, also in welchem Abstand Fahrzeuge an diesem Punkt erzeugt werden.
-
-Im dritten Abschnitt "Kreuzungen" werden alle `IntersectionPoint`-Objekte angelegt. Auch sie besitzen Namen und Koordinaten, zusätzlich jedoch eine Auflistung benachbarter Punkte mit Wahrscheinlichkeiten, die angeben, wie wahrscheinlich ein Fahrzeug die jeweilige Richtung wählt. Diese Wahrscheinlichkeiten dienen später als Entscheidungsgrundlage beim Routenwechsel der Fahrzeuge.
-
-Im Anschluss wird mit Hilfe der Klasse `PlanWriter` aus den Punkten ein Streckennetz aufgebaut. Dabei werden Verbindungen (sogenannte `Connection`-Objekte) zwischen `IntersectionPoints` <-> `EntryPoints` und `IntersectionPoints` <-> `IntersectionPoints`. Für jeden `EntryPoint` wird eine Verbindung zur ersten Kreuzung erstellt. Jede Verbindung enthält als zusätzliche Information die Distanz, die aus dem euklidischen Abstand zwischen Start- und Zielpunkt berechnet wird.
-
-Parallel dazu werden für jeden `EntryPoint` sogenannte `Spawner` erzeugt. Diese sind dafür verantwortlich, Fahrzeuge während der Simulation gemäß des definierten Spawn-Intervalls und unter zufälliger Normalverteilung der Geschwindigkeit zu erzeugen.
-
-### b) Algorithmus zur Berechnung
-
-Nach erfolgreicher Initialisierung wird das Streckennetz als `Plan.txt` ausgegeben und die Simulation gestartet. Diese läuft innerhalb einer Hauptschleife, die in der `Simulation`-Klasse über die Methode `run()` implementiert ist. Der Simulationszeitraum umfasst alle Zeitschritte von t=0 bis zur in der Eingabedatei festgelegten Zeitraum.
-
-In jedem Zeitschritt wird zunächst überprüft, ob ein `Spawner` ein neues Fahrzeug erzeugen soll. Ist dies der Fall, so wird ein neues `Vehicle`-Objekt erzeugt, das dem zugehörigen Streckenabschnitt zugewiesen wird. Jedes Fahrzeug bewegt sich nun entlang seiner aktuellen Verbindung. Dabei wird die Geschwindigkeit des Fahrzeugs (in km/h) in m/s umgerechnet und entsprechend des Zeitintervalls fortgeschrieben. Hierbei wird berücksichtigt, dass die Fahrzeuge eine konstante Geschwindigkeit innerhalb eines Taktes haben, jedoch unterschiedliche Geschwindigkeiten durch die Normalverteilung erhalten.
-
-Sobald ein Fahrzeug das Ende einer Verbindung erreicht, prüft das Programm, ob das Ziel ein `IntersectionPoint` ist. Falls ja, wird mit Hilfe der hinterlegten Wahrscheinlichkeitsverteilung zufällig entschieden, auf welche der möglichen Anschlussverbindungen das Fahrzeug wechseln soll. Falls nein, bedeutet es dass das Fahrzeug ein `EntryPoint` erreicht hat und somit kann es vom Straßennetz verschwinden. 
-
-Parallel zur Fahrzeugbewegung werden statistische Werte gesammelt. Hierzu wird pro Verbindung ein `StatisticsEntry` geführt. Während des Zeitschritts wird für jedes Fahrzeug, das sich auf einer Verbindung befindet, ein Zähler hochgesetzt. Am Ende des Schrittes wird die Anzahl aufsummiert und geprüft, ob der aktuelle Wert ein neues Maximum darstellt.
-
-Nach Abschluss der Berechnung eines Zeitschritts wird ein Snapshot aller Fahrzeuge in die Datei `Fahrzeuge.txt` geschrieben. Dieser Snapshot enthält die aktuelle Position (berechnet als Zwischenwert zwischen Start- und Endpunkt der Verbindung), das Ziel der Verbindung sowie die Fahrzeug-ID.
-
-Nachdem alle Zeitschritte durchlaufen wurden, wird das Ergebnis in zwei weiteren Dateien zusammengefasst: `Plan.txt` beinhaltet das Streckennetz mit allen Verbindungen, `Statistik.txt` enthält die statistische Auswertung jeder Verbindung, d.h. die Gesamtanzahl und die maximale Anzahl gleichzeitig befindlicher Fahrzeuge pro 100 Meter Strecke.
-
-Das Programm beendet seine Ausführung mit einer Abschlussmeldung und alle Ressourcen wie Dateischreiber werden ordnungsgemäß geschlossen.
-
-<div style="page-break-after: always;"></div>
-
-# Programmbeschreibung
-## UML-Klassendiagramme
-Das entwickelte Softwaresystem zur Verkehrsnetz-Simulation ist modular und objektorientiert aufgebaut. Die Hauptbestandteile bestehen aus den Bereichen Datenhaltung (Punkte, Verbindungen, Fahrzeuge), Ein-/Ausgabe, Logik (Simulation und Statistik) sowie dem Einstiegspunkt `App`.
-
-![ ](./img/Klassendiagramm)
-
-**Abbildung 1:** Klassendiagramm
-
-## UML-Sequenzdiagramm
-Im dargestellten UML-Sequenzdiagramm wird der Ablauf der Verkehrssimulation abgebildet. Der Benutzer (User) startet das Programm über die `App`, welche anschließend den `InputParser` zum Einlesen der Eingabedatei aufruft. Danach wird das Verkehrsnetz durch den `PlanWriter` erstellt, ein `FahrzeugeWriter` zur Protokollierung der Fahrzeugbewegungen geöffnet und die `Simulation` initialisiert. In der anschließenden Simulationsschleife werden zyklisch Fahrzeuge über den `Spawner` erzeugt, diese bewegen sich entlang ihrer `Connection` über `Vehicle.move()`, und Statistiken (`StatisticsEntry`) sowie Fahrzeugpositionen (`FahrzeugeWriter`) werden fortlaufend aktualisiert. Nach Beendigung der Zeitschritte schließt die `App` den `FahrzeugeWriter`, liest die gesammelten Statistiken aus der `Simulation` und übergibt diese an den `StatistikWriter` zur Ausgabe der Datei `Statistik.txt`.
-
-![ ](./img/Sequenzdiagramm)
-
-**Abbildung 2:** Sequenzdiagramm
-
-## Programmablaufplan
-Im Folgenden sind Programmablaufpläne (PAP) für wichtigste Methoden des Systems dargestellt.
-
-![ ](./img/PAP_Parser.png)
-
-**Abbildung 3:** Programmablaufplan für Parser
-
-![ ](./img/PAP_Simulation.png)
-
-**Abbildung 4:** Programmablaufplan für Simulation
-
-![ ](./img/PAP_MoveVehicle.png)
-
-**Abbildung 5:** Programmablaufplan für MoveFahrzeug
-
-![ ](./img/PAP_PlanWriter.png)
-
-**Abbildung 6:** Programmablaufplan für PlanWriter
-
-![ ](./img/PAP_StatistikWriter.png)
-
-**Abbildung 7:** Programmablaufplan für StatistikWriter
-
-![ ](./img/PAP_FahrzeugeWriter.png)
-
-**Abbildung 8:** Programmablaufplan für FahrzeugeWriter
-
-# Änderungen zum Montag
-## Algorithmus
-In meinem ersten Konzept am Montag war das Ziel, ein vollständiges Streckennetz, Fahrzeuge-Daten und Statistiken mithilfe der Eingabedatei zu erzeugen.
-
-**Streckenetz:** Hierzu sollte ab jeder Kreuzung ein Algorithmus gestartet werden, der alle erreichbaren Punkte jeweils einmal in beide Richtungen durchläuft. Dabei musste jede besuchte Strecke gespeichert werden, um eine erneute Berechnung und damit doppelte Erfassung zu vermeiden. Diese Vorgehensweise wurde auch in der finalen Programmversion erfolgreich umgesetzt.
-
-**buildConnectionsFromIntersections()**: erzeugt alle Strecken zwischen Kreuzungen gemäß der Wahrscheinlichkeiten.
-
-**buildConnectionsFromEntryPoints()**: erzeugt Verbindungen zwischen Einfallspunkten und deren Zielkreuzungen.
-
-Eine doppelte Erzeugung wird durch die Nutzung einer HashSet-Struktur (connectionsSet) verhindert.
-
-Somit ist der Grundalgorithmus gleich geblieben, wurde aber in der Implementierung vereinfacht und robuster gestaltet.
-
-
-## Optimierung
-
-**Statistik:** Der ursprüngliche Ansatz zur Berechnung der Fahrzeuganzahl pro Strecke basierte auf einer theoretischen Formel:
-
-$$
-x = \frac{t}{T(EP_i)} \quad \text{(Anzahl Fahrzeuge am Einfallspunkt i)}
-$$
-
-$$
-\text{Gesamtanzahl} = \sum_{i=1}^n \frac{t}{T(EP_i)}
-$$
-
-und zur Normalisierung:
-
-$$
-\text{Normierte Anzahl} = \frac{\sum X}{\text{Streckenlänge}}
-$$
-
-Dieser Ansatz wurde im finalen Programm durch eine realitätsnahe Zählung ersetzt:
-
-* Jedes Fahrzeug wird real erzeugt, bewegt und gezählt.
-* Die Klasse **StatisticsEntry** zählt pro Verbindung:
-
-  * Anzahl Fahrzeuge pro Zeitschritt
-  * Summierte Gesamtanzahl aller Fahrzeuge
-  * Maximal gleichzeitig anwesende Fahrzeuge
-
-Somit liefert die finale Simulation präzisere, dynamische Werte.
-
-**Fahrzeuge:** Auch die Berechnung der Fahrzeugpositionen wurde deutlich verbessert:
-
-* Montag: geplante Berechnung als $X_{neu} = X_{Start} + \Delta X$ war schwierig umzusetzen.
-* Jetzt: exakte lineare Interpolation zwischen Start- und Zielpunkt basierend auf **positionOnConnection** (Wert zwischen 0 und 1).
-* Implementiert in **FahrzeugeWriter.writeSnapshot()**.
-
-## Zusammenfassung
-
-Die Grundidee meines Montag-Konzepts wurde teilweise beibehalten. Die finale Implementierung nutzt jedoch elegantere und sicherere Methoden sowie echte Simulation. Nachdem ich tiefer an der Aufgabe und Simulation nachgedacht habe, kam ich auf bessere, leichtere und realistischer Ideen.
-
-
-<div style="page-break-after: always;"></div>
-
-# Algorithmus
-
-## Verkehrsflusssimulation – Algorithmusbeschreibung
+## Verbale Beschreibung des realisierten Verfahrens
+### Algorithmus
+**Verkehrsflusssimulation**
 
 Dieses Kapitel beschreibt den zugrunde liegenden Algorithmus der Anwendung zur Simulation des Fahrzeugverkehrs in einem Straßennetz. Die Software verarbeitet eine Eingabedatei mit Straßenknoten (Einfallspunkte und Kreuzungen), berechnet alle Verbindungen, simuliert den Fahrzeugfluss und liefert statistische Auswertungen.
 
@@ -341,6 +207,138 @@ Beispielauszug für Fahrzeuge.txt:
 
 ```
 
+<div style="page-break-after: always;"></div>
+
+## Verbale Beschreibung des realisierten Verfahrens
+### UML-Klassendiagramme
+Das entwickelte Softwaresystem zur Verkehrsnetz-Simulation ist modular und objektorientiert aufgebaut. Die Hauptbestandteile bestehen aus den Bereichen Datenhaltung (Punkte, Verbindungen, Fahrzeuge), Ein-/Ausgabe, Logik (Simulation und Statistik) sowie dem Einstiegspunkt `App`.
+
+![ ](./img/Klassendiagramm)
+
+**Abbildung 1:** Klassendiagramm
+
+### UML-Sequenzdiagramm
+Im dargestellten UML-Sequenzdiagramm wird der Ablauf der Verkehrssimulation abgebildet. Der Benutzer (User) startet das Programm über die `App`, welche anschließend den `InputParser` zum Einlesen der Eingabedatei aufruft. Danach wird das Verkehrsnetz durch den `PlanWriter` erstellt, ein `FahrzeugeWriter` zur Protokollierung der Fahrzeugbewegungen geöffnet und die `Simulation` initialisiert. In der anschließenden Simulationsschleife werden zyklisch Fahrzeuge über den `Spawner` erzeugt, diese bewegen sich entlang ihrer `Connection` über `Vehicle.move()`, und Statistiken (`StatisticsEntry`) sowie Fahrzeugpositionen (`FahrzeugeWriter`) werden fortlaufend aktualisiert. Nach Beendigung der Zeitschritte schließt die `App` den `FahrzeugeWriter`, liest die gesammelten Statistiken aus der `Simulation` und übergibt diese an den `StatistikWriter` zur Ausgabe der Datei `Statistik.txt`.
+
+![ ](./img/Sequenzdiagramm)
+
+**Abbildung 2:** Sequenzdiagramm
+
+### Programmablaufplan
+Im Folgenden sind Programmablaufpläne (PAP) für wichtigste Methoden des Systems dargestellt.
+
+![ ](./img/PAP_Parser.png)
+
+**Abbildung 3:** Programmablaufplan für Parser
+
+![ ](./img/PAP_Simulation.png)
+
+**Abbildung 4:** Programmablaufplan für Simulation
+
+![ ](./img/PAP_MoveVehicle.png)
+
+**Abbildung 5:** Programmablaufplan für MoveFahrzeug
+
+![ ](./img/PAP_PlanWriter.png)
+
+**Abbildung 6:** Programmablaufplan für PlanWriter
+
+![ ](./img/PAP_StatistikWriter.png)
+
+**Abbildung 7:** Programmablaufplan für StatistikWriter
+
+![ ](./img/PAP_FahrzeugeWriter.png)
+
+**Abbildung 8:** Programmablaufplan für FahrzeugeWriter
+
+# Änderungen gegenüber dem Konzept vom Montag
+## Algorithmische Änderungen
+In meinem ersten Konzept am Montag war das Ziel, ein vollständiges Streckennetz, Fahrzeuge-Daten und Statistiken mithilfe der Eingabedatei zu erzeugen.
+
+**Streckenetz:** Hierzu sollte ab jeder Kreuzung ein Algorithmus gestartet werden, der alle erreichbaren Punkte jeweils einmal in beide Richtungen durchläuft. Dabei musste jede besuchte Strecke gespeichert werden, um eine erneute Berechnung und damit doppelte Erfassung zu vermeiden. Diese Vorgehensweise wurde auch in der finalen Programmversion erfolgreich umgesetzt.
+
+**buildConnectionsFromIntersections()**: erzeugt alle Strecken zwischen Kreuzungen gemäß der Wahrscheinlichkeiten.
+
+**buildConnectionsFromEntryPoints()**: erzeugt Verbindungen zwischen Einfallspunkten und deren Zielkreuzungen.
+
+Eine doppelte Erzeugung wird durch die Nutzung einer HashSet-Struktur (connectionsSet) verhindert.
+
+Somit ist der Grundalgorithmus gleich geblieben, wurde aber in der Implementierung vereinfacht und robuster gestaltet.
+
+
+## Optimierungen
+
+**Statistik:** Der ursprüngliche Ansatz zur Berechnung der Fahrzeuganzahl pro Strecke basierte auf einer theoretischen Formel:
+
+$$
+x = \frac{t}{T(EP_i)} \quad \text{(Anzahl Fahrzeuge am Einfallspunkt i)}
+$$
+
+$$
+\text{Gesamtanzahl} = \sum_{i=1}^n \frac{t}{T(EP_i)}
+$$
+
+und zur Normalisierung:
+
+$$
+\text{Normierte Anzahl} = \frac{\sum X}{\text{Streckenlänge}}
+$$
+
+Dieser Ansatz wurde im finalen Programm durch eine realitätsnahe Zählung ersetzt:
+
+* Jedes Fahrzeug wird real erzeugt, bewegt und gezählt.
+* Die Klasse **StatisticsEntry** zählt pro Verbindung:
+
+  * Anzahl Fahrzeuge pro Zeitschritt
+  * Summierte Gesamtanzahl aller Fahrzeuge
+  * Maximal gleichzeitig anwesende Fahrzeuge
+
+Somit liefert die finale Simulation präzisere, dynamische Werte.
+
+**Fahrzeuge:** Auch die Berechnung der Fahrzeugpositionen wurde deutlich verbessert:
+
+* Montag: geplante Berechnung als $X_{neu} = X_{Start} + \Delta X$ war schwierig umzusetzen.
+* Jetzt: exakte lineare Interpolation zwischen Start- und Zielpunkt basierend auf **positionOnConnection** (Wert zwischen 0 und 1).
+* Implementiert in **FahrzeugeWriter.writeSnapshot()**.
+
+## Zusammenfassung
+
+Die Grundidee meines Montag-Konzepts wurde teilweise beibehalten. Die finale Implementierung nutzt jedoch elegantere und sicherere Methoden sowie echte Simulation. Nachdem ich tiefer an der Aufgabe und Simulation nachgedacht habe, kam ich auf bessere, leichtere und realistischer Ideen.
+
+
+<div style="page-break-after: always;"></div>
+
+# Erweiterbarkeit gemäß den Anforderungen des Auftraggebers
+Die vorliegende Software wurde so konzipiert, dass sie neben der Erfüllung der Grundanforderungen des Auftraggebers insbesondere eine solide Basis für zukünftige Erweiterungen bietet. Ziel war es, eine flexible Architektur zu schaffen, die auf neue Anforderungen – wie zum Beispiel:
+- Mindestabstand und Überholverbot
+- Kreuzungen mit Verkehrsregeln - wie Ampeln, Kreisverkehr oder Rechts-Vor-Links
+- Mehrspurige Strecken
+- Dynamische Fahrzeuggeschwindigkeit
+
+
+In diesem Kapitel werden die vier Erweiterungsmöglichkeiten vorgestellt, die aus Sicht des Auftraggebers besonders relevant sind. Zu jeder Erweiterung werden das Problem und ein möglicher Lösungsansatz erläutert.
+
+## Mindestabstand und Überholverbot
+**Problem:** In der aktuellen Implementierung bewegen sich Fahrzeuge unabhängig voneinander und können sich auf derselben Position befinden – d. h., sie „durchfahren“ einander. Dies vereinfacht die Simulation, entspricht jedoch nicht dem realen Verkehrsverhalten. Eine realistischere Simulation erfordert, dass Fahrzeuge einen Mindestabstand einhalten und nicht überholen dürfen.
+
+**Lösungsansatz:** Die Umsetzung von Mindestabstand und Überholverbot erfolgt durch eine Erweiterung der Methode `Vehicle.move()`. Vor der Positionsaktualisierung prüft das Fahrzeug, ob ein vorausfahrendes Fahrzeug auf derselben Verbindung vorhanden ist und ob der Abstand größer als ein definierter Mindestabstand (z. B. 5 m) ist. Falls nicht, unterbleibt die Bewegung. Die Verwaltung erfolgt über eine sortierte Liste von Fahrzeugen pro `Connection`, wodurch die Reihenfolge und Abstandsprüfung effizient möglich ist. Die Architektur erlaubt dies, da `Simulation` bereits pro Zeitschritt alle Fahrzeuge verarbeitet und `Vehicle` die eigene Position kontinuierlich über `positionOnConnection` pflegt.
+
+## Verkehrsflussregelung an Kreuzungen
+**Problem:** In der aktuellen Simulation fahren Fahrzeuge ohne Unterbrechung durch Kreuzungen. Für eine realitätsnahe Simulation müssen jedoch Verkehrsregeln wie Ampelsteuerungen oder Vorrangregeln berücksichtigt werden. Fahrzeuge sollen ggf. an Kreuzungen anhalten oder warten.
+
+**Lösungsansatz:** Zur Umsetzung von Ampeln oder Vorfahrtsregeln kann jedem `IntersectionPoint` optional ein `IntersectionController` zugewiesen werden. Vor dem Wechsel auf die nächste Verbindung ruft das Fahrzeug eine neue Methode wie `canProceed()` auf, die prüft, ob das Überqueren aktuell erlaubt ist (z. B. grüne Ampel oder Vorrang gegeben). Die Entscheidung wird in einer neuen Methode in der Klasse `Simulation` getroffen. Die Architektur unterstützt dies, da `IntersectionPoint` erweiterbar ist und somit auch die Logik modular ergänzt werden kann.
+
+## Mehrspurige Strecken
+**Problem:** Aktuell existieren Verbindungen (`Connection`) nur mit einer einzigen Fahrspur pro Richtung. In einem realistischeren Modell sind Straßen häufig mehrspurig, was ein paralleles Fahren und Überholen ermöglichen würde.
+
+**Lösungsansatz:** Für mehrspurige Straßen kann jede `Connection` mehrere Fahrspuren bekommen, zum Beispiel als Liste von Fahrzeuglisten (`List<Vehicle>[]`). Beim Erzeugen eines Fahrzeugs in `Spawner.spawnVehicle()` wird zufällig oder gezielt eine Spur ausgewählt. Die Bewegung auf der Spur bleibt wie bisher über `Vehicle.move()` geregelt. Spurwechsel lassen sich später durch eine eigene Strategie ergänzen. Da Verbindungen (Straßen) hier schon als eigene Objekte funktionieren, kann man das einfach erweitern, ohne den Rest des Programms ändern zu müssen.
+
+## Dynamische Fahrzeuggeschwindigkeit
+**Problem:** Bisher fahren Fahrzeuge mit einer konstanten, zufällig festgelegten Geschwindigkeit. In der Realität ändern Fahrzeuge ihre Geschwindigkeit abhängig von Verkehr, Straßenbedingungen, Kurven oder Tempolimits.
+
+**Lösungsansatz:** Um streckenabhängige Geschwindigkeiten zu simulieren, wird `Connection` um ein Attribut `speedLimit` ergänzt. Beim Wechsel auf eine neue Verbindung prüft das Fahrzeug in `setCurrentConnection()` die erlaubte Höchstgeschwindigkeit und passt die eigene `speed` ggf. an. Alternativ kann pro Zeitschritt in `Vehicle.move()` die Geschwindigkeit dynamisch angepasst werden (z. B. bei Kurven, Stau). Die vorhandene Architektur erlaubt diese Erweiterung problemlos, da die Bewegung bereits zentral über `Vehicle.move()` gesteuert wird.
+
+
 # Benutzeranleitung
 Diese Anleitung beschreibt, wie Sie das Verkehrsflusssimulationsprogramm installieren, konfigurieren und ausführen können.
 
@@ -355,26 +353,39 @@ Diese Anleitung beschreibt, wie Sie das Verkehrsflusssimulationsprogramm install
 3. In das Projektverzeichnis wechseln
 
 ## Ausführung der Testfälle
-Kompilieren und Starten
-Linux:
+### Kompilieren und Starten
+**Linux:**
 ```
 javac -d bin src/**/*.java
 java -cp bin app.App <Pfad_zur_Eingabe.txt> <Ausgabeordner>
 ```
-Windows (CMD):
+**Windows (CMD):**
 ```javac -d bin src\**\*.java
 java -cp bin app.App <Pfad_zur_Eingabe.txt> <Ausgabeordner>
 ```
 Beispiel für `<Pfad_zur_Eingabe.txt>`:
->`Linux:./input/Eingabe_IHK_03.txt`
 
->`Windows (CMD): .\input\Eingabe_IHK_03.txt`
+- Linux:
+
+    `./input/Eingabe_IHK_03.txt`
+
+- Windows (CMD):
+
+    `.\input\Eingabe_IHK_03.txt`
 
 Beispiel für `<Ausgabeordner>`:
->`output_03`
+    `output_03`
 
 Wenn Sie die Argumente <Pfad_zur_Eingabe.txt> oder <Ausgabeordner> falsch eingeben, kann das Programm nicht funktionieren.
-Ausgabeordner wird automatsch erzeugt wenn das Programm richtig kompiliert und gestartet ist.  
+Ausgabeordner wird automatsch erzeugt wenn das Programm richtig kompiliert und gestartet ist.
+
+### Grafik Simulation
+Der Aufruf von "Plot.py" erfordert genau einen Parameter: den absoluten Pfad des Verzeichnisses, in dem alle Dateien des Testfalls liegen. Jeder Testfall sollte in einem eigenen Verzeichnis liegen. Darin liegt ein Unterverzeichnis "plots", in dem die PNG-Plots gespeichert werden. Existiert "plots" nicht, wird es angelegt. 
+
+Die Visualisierung zeigt alle Zeitschritte mit Überschrift an. Am Ende die Simulation beginnt sie automatisch von vorne. Der erste Durchgang ist langsamer, weil die PNG-Bilder erzeugt werden.
+```
+python3 Plot.py output_03/
+```
 
 ## Projektstruktur
 Das Projekt ist wie folgt strukturiert:
@@ -435,41 +446,10 @@ Die im Verzeichnis `referenz_output/` enthaltenen Dateien zeigen beispielhafte A
 
 ## Weitere Testfälle
 
-# Erweiterbarkeit
-Die vorliegende Software wurde so konzipiert, dass sie neben der Erfüllung der Grundanforderungen des Auftraggebers insbesondere eine solide Basis für zukünftige Erweiterungen bietet. Ziel war es, eine flexible Architektur zu schaffen, die auf neue Anforderungen – wie zum Beispiel:
-- Mindestabstand und Überholverbot
-- Kreuzungen mit Verkehrsregeln - wie Ampeln, Kreisverkehr oder Rechts-Vor-Links
-- Mehrspurige Strecken
-- Dynamische Fahrzeuggeschwindigkeit
-
-
-In diesem Kapitel werden die vier Erweiterungsmöglichkeiten vorgestellt, die aus Sicht des Auftraggebers besonders relevant sind. Zu jeder Erweiterung werden das Problem und ein möglicher Lösungsansatz erläutert.
-## Mindestabstand und Überholverbot
-**Problem:** In der aktuellen Implementierung bewegen sich Fahrzeuge unabhängig voneinander und können sich auf derselben Position befinden – d. h., sie „durchfahren“ einander. Dies vereinfacht die Simulation, entspricht jedoch nicht dem realen Verkehrsverhalten. Eine realistischere Simulation erfordert, dass Fahrzeuge einen Mindestabstand einhalten und nicht überholen dürfen.
-
-**Lösungsansatz:** Die Umsetzung von Mindestabstand und Überholverbot erfolgt durch eine Erweiterung der Methode `Vehicle.move()`. Vor der Positionsaktualisierung prüft das Fahrzeug, ob ein vorausfahrendes Fahrzeug auf derselben Verbindung vorhanden ist und ob der Abstand größer als ein definierter Mindestabstand (z. B. 5 m) ist. Falls nicht, unterbleibt die Bewegung. Die Verwaltung erfolgt über eine sortierte Liste von Fahrzeugen pro `Connection`, wodurch die Reihenfolge und Abstandsprüfung effizient möglich ist. Die Architektur erlaubt dies, da `Simulation` bereits pro Zeitschritt alle Fahrzeuge verarbeitet und `Vehicle` die eigene Position kontinuierlich über `positionOnConnection` pflegt.
-
-## Kreuzungen mit Verkehrsregeln - wie Ampeln, Kreisverkehr oder Rechts-Vor-Links
-**Problem:** In der aktuellen Simulation fahren Fahrzeuge ohne Unterbrechung durch Kreuzungen. Für eine realitätsnahe Simulation müssen jedoch Verkehrsregeln wie Ampelsteuerungen oder Vorrangregeln berücksichtigt werden. Fahrzeuge sollen ggf. an Kreuzungen anhalten oder warten.
-
-**Lösungsansatz:** Zur Umsetzung von Ampeln oder Vorfahrtsregeln kann jedem `IntersectionPoint` optional ein `IntersectionController` zugewiesen werden. Vor dem Wechsel auf die nächste Verbindung ruft das Fahrzeug eine neue Methode wie `canProceed()` auf, die prüft, ob das Überqueren aktuell erlaubt ist (z. B. grüne Ampel oder Vorrang gegeben). Die Entscheidung wird in einer neuen Methode in der Klasse `Simulation` getroffen. Die Architektur unterstützt dies, da `IntersectionPoint` erweiterbar ist und somit auch die Logik modular ergänzt werden kann.
-
-## Mehrspurige Strecken
-**Problem:** Aktuell existieren Verbindungen (`Connection`) nur mit einer einzigen Fahrspur pro Richtung. In einem realistischeren Modell sind Straßen häufig mehrspurig, was ein paralleles Fahren und Überholen ermöglichen würde.
-
-**Lösungsansatz:** Für mehrspurige Straßen kann jede `Connection` mehrere Fahrspuren bekommen, zum Beispiel als Liste von Fahrzeuglisten (`List<Vehicle>[]`). Beim Erzeugen eines Fahrzeugs in `Spawner.spawnVehicle()` wird zufällig oder gezielt eine Spur ausgewählt. Die Bewegung auf der Spur bleibt wie bisher über `Vehicle.move()` geregelt. Spurwechsel lassen sich später durch eine eigene Strategie ergänzen. Da Verbindungen (Straßen) hier schon als eigene Objekte funktionieren, kann man das einfach erweitern, ohne den Rest des Programms ändern zu müssen.
-
-## Dynamische Fahrzeuggeschwindigkeit
-**Problem:** Bisher fahren Fahrzeuge mit einer konstanten, zufällig festgelegten Geschwindigkeit. In der Realität ändern Fahrzeuge ihre Geschwindigkeit abhängig von Verkehr, Straßenbedingungen, Kurven oder Tempolimits.
-
-**Lösungsansatz:** Um streckenabhängige Geschwindigkeiten zu simulieren, wird `Connection` um ein Attribut `speedLimit` ergänzt. Beim Wechsel auf eine neue Verbindung prüft das Fahrzeug in `setCurrentConnection()` die erlaubte Höchstgeschwindigkeit und passt die eigene `speed` ggf. an. Alternativ kann pro Zeitschritt in `Vehicle.move()` die Geschwindigkeit dynamisch angepasst werden (z. B. bei Kurven, Stau). Die vorhandene Architektur erlaubt diese Erweiterung problemlos, da die Bewegung bereits zentral über `Vehicle.move()` gesteuert wird.
-
 # Zusammenfassung und Ausblick
 In diesem Projekt wurde eine verkehrsbasierte Simulationsumgebung entwickelt, die den Fluss von Fahrzeugen durch ein Netzwerk aus Einfallspunkten und Kreuzungen modelliert. Die Anwendung liest eine strukturierte Eingabedatei, konstruiert automatisch ein Straßennetz, simuliert den Fahrzeugfluss über definierte Zeitintervalle und dokumentiert sowohl Momentaufnahmen der Fahrzeugpositionen als auch statistische Auswertungen der Netzlast.
 
 Die Software ist modular aufgebaut und trennt sauber die Verarbeitungsschritte: Eingabeparsing, Netzaufbau, Simulation, Statistik und Ausgabe.
 
 Die bestehende Architektur ermöglicht eine einfache Erweiterung des Systems. In einem nächsten Schritt könnten die in Kapitel Erweiterbarkeit beschriebenen Funktionserweiterungen – wie Mindestabstand, Ampelregelungen, mehrspurige Straßen oder dynamische Geschwindigkeiten – umgesetzt werden. Darüber hinaus wäre es denkbar, weitere Features zu integrieren. Damit bietet die Anwendung eine solide Grundlage für vielfältige Weiterentwicklungen im Bereich verkehrsbasierter Simulationen.
-
-## Quellcode
 
