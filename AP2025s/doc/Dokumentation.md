@@ -29,8 +29,7 @@
 
 # Einleitung
 Vorliegend ist die Dokumentation meiner Lösung zur Aufgabe "Entwicklung eines Softwaresystems" aus der "Abschlussprüfung Sommer 2025" für den Ausbildungsberuf MATSE, auch "GroPro" genannt.
-Ich, Hussein Idris, habe diese Aufgabe eigenhändig, ohne fremde Hilfe und mit großer Sorgfalt gelöst.
-
+Diese Lösung wurde von mir, Hussein Idris im Rahmen der Abschlussprüfung Sommer 2025 eigenständig erarbeitet.
 Java wurde als Programmiersprache gewählt, da es durch die objektorientierte Struktur, starke Typisierung und die klare Trennung von Verantwortlichkeiten besonders gut für die Modellierung komplexer Systeme geeignet ist.
 Darüber hinaus gewährleistet die Plattformunabhängigkeit von Java – dank der Java Virtual Machine (JVM) – eine einfache Portierbarkeit und breite Einsatzfähigkeit der entwickelten Lösung.
 
@@ -384,16 +383,26 @@ Beispiel für `<Pfad_zur_Eingabe.txt>`:
 
     `.\input\Eingabe_IHK_03.txt`
 
-Beispiel für `<Ausgabeordner>`:
-    `output_03`
+
 
 Wenn Sie die Argumente <Pfad_zur_Eingabe.txt> oder <Ausgabeordner> falsch eingeben, kann das Programm nicht funktionieren.
 Ausgabeordner wird automatsch erzeugt wenn das Programm richtig kompiliert und gestartet ist.
 
+### Skript zur Ausführung aller Testfälle
+**Linux:**
+`./run_all_tests.sh`
+
+**Windows (CMD):**
+`run_all_tests.bat`
+
+Dieses Skript durchläuft alle `.txt`-Dateien im Verzeichnis `input`, verarbeitet jede Datei einzeln und erzeugt im `output`-Verzeichnis einen entsprechenden Unterordner – benannt nach dem Namen der Eingabedatei (ohne Dateiendung) – in dem die jeweiligen Ausgabedateien gespeichert werden.
+
 ### Grafik Simulation
+
 Der Aufruf von "Plot.py" erfordert genau einen Parameter: den absoluten Pfad des Verzeichnisses, in dem alle Dateien des Testfalls liegen. Jeder Testfall sollte in einem eigenen Verzeichnis liegen. Darin liegt ein Unterverzeichnis "plots", in dem die PNG-Plots gespeichert werden. Existiert "plots" nicht, wird es angelegt. 
 
 Die Visualisierung zeigt alle Zeitschritte mit Überschrift an. Am Ende die Simulation beginnt sie automatisch von vorne. Der erste Durchgang ist langsamer, weil die PNG-Bilder erzeugt werden.
+**Beispiel** Simulation aus Daten im Ordner output_03:
 ```
 python3 Plot.py output_03/
 ```
@@ -416,14 +425,17 @@ AP2025s/
 ├── referenz_output/
 │   ├── output_IHK_01
 │   │   ├── plots
-│   │   │   ├── t=0
-│   │   │   └── ...
 │   │   ├── Plan.txt
 │   │   └── ...
 │   └── ...
 ├── input/
 │   ├── Eingabe_IHK_01.txt
 │   └── ...
+├── output/
+│   ├── Eingabe_IHK_01
+│   │   ├── plots
+│   │   ├── Plan.txt
+│   │   └── ...
 ├── src/
 │   ├── app/
 │   │   └── App
@@ -451,7 +463,9 @@ AP2025s/
 │   │   ├── SpawnerTest.java
 │   │   └── ...
 ├── Plot.py
-└── pom.xml
+├── pom.xml
+├── run_all_tests.bat
+└── run_all_tests.sh
 ```
 <div style="page-break-after: always;"></div>
 
@@ -486,6 +500,11 @@ Die Tests wurden über Maven (`mvn test`) ausgeführt. Alle Testfälle liefen er
 
 **Abbildung 9:** Screenshot Ergebnisse Unit-Test
 
+Mit Hilfe von JUnit-Tests habe ich mehrere `.txt`-Dateien erstellt, die Grenzfälle sowie fehlerhafte Formate oder ungültige Werte enthalten, um zu überprüfen, ob der `InputParser` zuverlässig und korrekt funktioniert.
+Diese Dateien werden in der Klasse `InputParserTest.java` dynamisch erstellt und angepasst. Sie können durch gezielte Manipulation verschiedene Testszenarien abbilden und werden im Rahmen der automatisierten Tests mithilfe von `mvn test` generiert und überprüft.
+
+
+<div style="page-break-after: always;"></div>
 
 # Zusammenfassung und Ausblick
 In diesem Projekt wurde eine verkehrsbasierte Simulationsumgebung entwickelt, die den Fluss von Fahrzeugen durch ein Netzwerk aus Einfallspunkten und Kreuzungen modelliert. Die Anwendung liest eine strukturierte Eingabedatei, konstruiert automatisch ein Straßennetz, simuliert den Fahrzeugfluss über definierte Zeitintervalle und dokumentiert sowohl Momentaufnahmen der Fahrzeugpositionen als auch statistische Auswertungen der Netzlast.
