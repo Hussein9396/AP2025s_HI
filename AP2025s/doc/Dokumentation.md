@@ -363,48 +363,86 @@ Diese Anleitung beschreibt, wie Sie das Verkehrsflusssimulationsprogramm install
 3. In das Projektverzeichnis wechseln
 
 ## Ausführung der Testfälle
-### Kompilieren und Starten
-**Linux:**
+
+### Windows (CMD)
+
+**Kompilieren:**
+
+```cmd
+javac -d bin src\**\*.java
 ```
+
+**Starten:**
+
+```cmd
+java -cp bin app.App <Pfad_zur_Eingabe.txt> <Ausgabeordner>
+```
+
+**Beispiel:**
+
+```cmd
+java -cp bin app.App .\input\Eingabe_IHK_03.txt .\output\Eingabe_IHK_03
+```
+
+**Automatisiertes Testskript:**
+
+```cmd
+run_all_tests.bat
+```
+
+---
+
+### Linux
+
+**Kompilieren:**
+
+```bash
 javac -d bin src/**/*.java
+```
+
+**Starten:**
+
+```bash
 java -cp bin app.App <Pfad_zur_Eingabe.txt> <Ausgabeordner>
 ```
-**Windows (CMD):**
-```javac -d bin src\**\*.java
-java -cp bin app.App <Pfad_zur_Eingabe.txt> <Ausgabeordner>
+
+**Beispiel:**
+
+```bash
+java -cp bin app.App ./input/Eingabe_IHK_03.txt ./output/Eingabe_IHK_03
 ```
-Beispiel für `<Pfad_zur_Eingabe.txt>`:
 
-- Linux:
+**Automatisiertes Testskript:**
 
-    `./input/Eingabe_IHK_03.txt`
+```bash
+./run_all_tests.sh
+```
 
-- Windows (CMD):
+---
 
-    `.\input\Eingabe_IHK_03.txt`
+### Allgemeine Hinweise
 
+* Die`<Pfad_zur_Eingabe.txt>-Datei ist` durch den vollständigen Pfad zur Eingabedatei (z. B. `input/Eingabe_IHK_03.txt`).
+* Der `<Ausgabeordner>` ist ein Zielverzeichnis für die Ergebnisse. Es wird automatisch erstellt, falls es nicht existiert.
+* Eine fehlerhafte Angabe der Argumente verhindert die Ausführung des Programms.
+* Das Skript `run_all_tests` verarbeitet alle `.txt`-Dateien im `input`-Verzeichnis und erstellt im `output`-Ordner automatisch Unterverzeichnisse (benannt nach der Eingabedatei ohne Erweiterung) für die jeweiligen Ausgaben.
+* Nicht wundern, wenn beim Ausführen von `run_all_tests` in der Konsole einige Exceptions erscheinen. Diese stammen aus absichtlich fehlerhaften Testfällen, die zu Testzwecken erstellt wurden. Die offiziellen IHK-Testfälle (sowie alle richtige Testfälle) liefern stets die korrekte Ausgabe.
 
-
-Wenn Sie die Argumente <Pfad_zur_Eingabe.txt> oder <Ausgabeordner> falsch eingeben, kann das Programm nicht funktionieren.
-Ausgabeordner wird automatsch erzeugt wenn das Programm richtig kompiliert und gestartet ist.
-
-### Skript zur Ausführung aller Testfälle
-**Linux:**
-`./run_all_tests.sh`
-
-**Windows (CMD):**
-`run_all_tests.bat`
-
-Dieses Skript durchläuft alle `.txt`-Dateien im Verzeichnis `input`, verarbeitet jede Datei einzeln und erzeugt im `output`-Verzeichnis einen entsprechenden Unterordner – benannt nach dem Namen der Eingabedatei (ohne Dateiendung) – in dem die jeweiligen Ausgabedateien gespeichert werden.
 
 ### Grafik Simulation
 
-Der Aufruf von "Plot.py" erfordert genau einen Parameter: den absoluten Pfad des Verzeichnisses, in dem alle Dateien des Testfalls liegen. Jeder Testfall sollte in einem eigenen Verzeichnis liegen. Darin liegt ein Unterverzeichnis "plots", in dem die PNG-Plots gespeichert werden. Existiert "plots" nicht, wird es angelegt. 
+Der Aufruf von `Plot.py` erfordert genau einen Parameter: den absoluten Pfad des Verzeichnisses, in dem alle Dateien des Testfalls liegen. Jeder Testfall sollte in einem eigenen Verzeichnis liegen. Darin liegt ein Unterverzeichnis "plots", in dem die PNG-Plots gespeichert werden. Existiert "plots" nicht, wird es angelegt. 
 
 Die Visualisierung zeigt alle Zeitschritte mit Überschrift an. Am Ende die Simulation beginnt sie automatisch von vorne. Der erste Durchgang ist langsamer, weil die PNG-Bilder erzeugt werden.
-**Beispiel** Simulation aus Daten im Ordner output_03:
+**Beispiel** Simulation aus Daten im Ordner `output`:
+
+Windows (CMD):
 ```
-python3 Plot.py output_03/
+python .\Plot.py .\output/Eingabe_IHK_03
+```
+Linux:
+```
+python3 Plot.py output/Eingabe_IHK_03
 ```
 <div style="page-break-after: always;"></div>
 
@@ -473,7 +511,7 @@ AP2025s/
 
 ## Vorgegebene Testfälle
 
-Die vorgegebenen Testfälle befinden sich in den Ordnern `input/IHK_*`. Ich habe alle fünf Testfälle erfolgreich mit dem entwickelten Programm ausgeführt. Die generierten Ergebnisse sind nachvollziehbar und sinnvoll.
+Die vorgegebenen Testfälle befinden sich in den Ordnern `input/`, und haben den Namen `Eingabe_IHK_*`. Ich habe alle fünf Testfälle erfolgreich mit dem entwickelten Programm ausgeführt. Die generierten Ergebnisse sind nachvollziehbar und sinnvoll.
 
 Die Datei `Plan.txt`, deren Inhalte deterministisch sind, konnte direkt mit den im Aufgabenblatt gezeigten Werten verglichen werden – sie stimmen überein. Die Dateien `Statistik.txt` und `Fahrzeuge.txt` enthalten Zufallseinflüsse. Daher sind exakte Übereinstimmungen mit Beispielwerten nicht möglich. Dennoch zeigen die Ausgaben eine konsistente Logik und realistische Verkehrsdynamik, was die korrekte Funktionsweise der Simulation bestätigt.
 
